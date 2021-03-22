@@ -1,0 +1,11 @@
+server:
+  host: 127.0.0.1
+  port: 8080 # Currently, to override the port you must set the "PORT" environment variable
+  endpoint: "/test/v1/bars"
+api-keys:
+  tda:
+    # How to obtain these:
+    #   https://github.com/studerw/td-ameritrade-client/wiki/Create-a-TDA-Refresh-Token
+    #   https://www.reddit.com/r/algotrading/comments/914q22/successful_access_to_td_ameritrade_api/
+    refresh-token: "YOUR-REFRESH-TOKEN"
+    consumer-key: "YOUR-API-KEY"

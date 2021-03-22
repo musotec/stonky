@@ -8,7 +8,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
  * https://alpaca.markets/docs/api-documentation/api-v2/market-data/alpaca-data-api-v1/bars/
  */
 @JsonClass(generateAdapter = false)
-data class Bars(@Transient val bars: MutableMap<String, List<CandleInterface>> = mutableMapOf()) {
+data class Bars(@Transient val bars: MutableMap<String, List<AbstractCandle>> = mutableMapOf()) {
 
     companion object {
         @JvmStatic
@@ -21,13 +21,13 @@ data class Bars(@Transient val bars: MutableMap<String, List<CandleInterface>> =
             .add(KotlinJsonAdapterFactory())
             .build()
 
-        private val adapter: JsonAdapter<Map<String, List<CandleInterface>>> = moshi.adapter(TYPE_MAP_STOCK_CANDLES)
+        private val adapter: JsonAdapter<Map<String, List<AbstractCandle>>> = moshi.adapter(TYPE_MAP_STOCK_CANDLES)
 
         fun Bars.toJson(): String = adapter.toJson(this.bars)
     }
 
     operator fun get(key: String) = bars[key]
-    operator fun set(key: String, value: List<CandleInterface>) {
+    operator fun set(key: String, value: List<AbstractCandle>) {
         bars[key] = value
     }
 }
@@ -40,9 +40,15 @@ data class Candle(
     @Json(name="l") override val low: Double,
     @Json(name="c") override val close: Double,
     @Json(name="v") override val volume: Int
-) : CandleInterface()
+) : AbstractCandle() {
+    companion object {
+        val NULL_CANDLE = Candle(-1, 0.0, 0.0, 0.0, 0.0, -1)
+        fun Candle.isNull() = timeSeconds == -1
+    }
+}
 
-abstract class CandleInterface {
+/** Represents price changes over an unspecified time window. BigDecimal is not used for algorithm performance reasons. */
+abstract class AbstractCandle {
     abstract val timeSeconds: Int
     abstract val open: Double
     abstract val high: Double

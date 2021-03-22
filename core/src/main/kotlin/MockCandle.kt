@@ -15,7 +15,7 @@ data class MockCandle(
     @Json(name="l") override val low: Double,
     @Json(name="c") override val close: Double,
     @Json(name="v") override val volume: Int = MIN_VOLUME
-) : CandleInterface() {
+) : AbstractCandle() {
 
     companion object {
         val random = Random(1234567890L)

@@ -8,3 +8,5 @@
 /service
 /tomcat.*/
 /core/build/
+config.yaml
+local.properties

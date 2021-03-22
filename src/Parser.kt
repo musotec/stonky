@@ -1,4 +1,4 @@
-import tech.muso.stonky.core.model.*
+import io.ktor.http.cio.websocket.*
 
 object Parser {
     //- "{symbol}"
@@ -25,7 +25,23 @@ object Parser {
         }
     }
 
-    fun parseCommand(text: String) {
+    /**
+     * Use the text of the Frame if it is a valid Frame.Text object.
+     */
+    private inline fun Frame.useText(lambda: (text: String) -> Unit) {
+        if (this is Frame.Text) {
+            lambda(readText())
+        }
+    }
 
+    fun parseCommand(frame: Frame): Command {
+        frame.useText {
+            return when (it) {
+                "MOCK" -> Command(CommandType.CANDLE_SIMULATE, "MOCK")
+                else -> Command(CommandType.CANDLE_REPLAY, it)
+            }
+        }
+
+        return Command(CommandType.CANDLE_SIMULATE, "MOCK")
     }
 }

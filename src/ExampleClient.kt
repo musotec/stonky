@@ -29,13 +29,13 @@ object WebSocketExampleClientApp {
             val client = HttpClient(CIO).config { install(WebSockets) }
 
             // connect to the server (localhost:8080)
-            client.ws(method = HttpMethod.Get, host = "127.0.0.1", port = Config.PORT, path = Config.PATH_TEST_API) {
-                send(Frame.Text("AUTH")) // todo: process some JSON for real
+            client.ws(method = HttpMethod.Get, host = "127.0.0.1", port = ConfigVars.PORT, path = ConfigVars.PATH_TEST_API) {
+                send(Frame.Text("SPY")) // todo: process some JSON for real
 
                 // launch asynchronously 1000 WebSocket calls every 1000 ms
                 async {
                     for (i in 0 until 1000) {
-                        delay(1000)
+//                        delay(1000)
                         send(Frame.Text("Fetching... [$i]"))
 
                         // early exit; todo: design and document actual mock api

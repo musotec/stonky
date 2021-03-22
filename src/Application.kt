@@ -1,5 +1,6 @@
 package tech.muso.stonky
 
+import com.studerw.tda.client.HttpTdaClient
 import tech.muso.stonky.core.model.MockCandle
 import io.ktor.application.*
 import io.ktor.response.*
@@ -17,6 +18,9 @@ import io.ktor.features.*
 import org.slf4j.event.*
 import tech.muso.stonky.core.model.Bars
 import tech.muso.stonky.core.model.Bars.Companion.toJson
+import tech.muso.stonky.core.model.Candle
+import toCandle
+import java.util.*
 
 fun main(args: Array<String>): Unit = io.ktor.server.tomcat.EngineMain.main(args)
 
@@ -42,38 +46,85 @@ fun Application.module(testing: Boolean = false) {
     }
 
     routing {
+        val config = Config.defaultConfig()
+        println(config)
+
         get("/") {
-            call.respondText("HELLO WORLD... you want http://127.0.0.1:${Config.PORT}${Config.PATH_TEST_API} !", contentType = ContentType.Text.Plain)
+            call.respondText("HELLO WORLD... you want http://127.0.0.1:${config.server.port}${config.server.endpoint} !", contentType = ContentType.Text.Plain)
         }
 
-        webSocket(Config.PATH_TEST_API) {
-            var currentCandle = MockCandle(
-                open = 100.0,
-                close = 100.0,
-                high = 100.0,
-                low = 100.0,
-            )
-
+        webSocket(ConfigVars.PATH_TEST_API) {
             send(Frame.Text("SERVER SIMULATING..."))
 
-            val symbol = "MOCK"
-            val bars = Bars(mutableMapOf(Pair(symbol, currentCandle.toCandleList())))
+            // get initial frame
+            val frame = incoming.receive()
+            val command = Parser.parseCommand(frame)
 
-            while (true) {
-                val frame = incoming.receive()
-                currentCandle = currentCandle.next()
-                if (frame is Frame.Text) {
-                    val text = frame.readText()
-                    println("Client said: $text")
-                    bars[symbol] = currentCandle.toCandleList()
-                    send(Frame.Text(bars.toJson()))
+            when(command.type) {
+                CommandType.CANDLE_REPLAY -> {
+                    val symbol = command.symbol
 
-                    // debug close
-                    if (text == "CLOSE") {
-                        break
+                    val tda = config.`api-keys`?.tda
+                    if (tda == null) {
+                        send(Frame.Text("Setup your config.yaml to with api-keys:tda:refresh-token and api-keys:tda:consumer-key!"))
+                        return@webSocket
+                    }
+
+                    // TODO: these must be loaded from a JSON/YAML file or something to release a jar.
+                    val props = Properties().apply {
+                        setProperty("tda.client_id", tda.`consumer-key`) // auth.tmp.txt
+                        setProperty("tda.token.refresh", tda.`refresh-token`)
+                    }
+
+                    val tdaClient = HttpTdaClient(props)
+                    val priceHistory = tdaClient.priceHistory(symbol)
+                    var currentCandle = Candle.NULL_CANDLE
+                    val bars = Bars(mutableMapOf(Pair(symbol, listOf(currentCandle))))
+                    priceHistory.candles.forEach {
+                        val frame = incoming.receive()
+                        if (frame is Frame.Text) {
+
+                            val text = frame.readText()
+                            println("Client said: $text")
+                            currentCandle = it.toCandle()
+                            bars[symbol] = currentCandle.toCandleList()
+                            send(Frame.Text(bars.toJson()))
+
+                            // debug close
+                            if (text == "CLOSE") {
+                                return@webSocket
+                            }
+                        }
+                    }
+                }
+                CommandType.CANDLE_SIMULATE -> {
+                    val symbol = "MOCK"
+                    var currentCandle = MockCandle(
+                        open = 100.0,
+                        close = 100.0,
+                        high = 100.0,
+                        low = 100.0,
+                    )
+                    val bars = Bars(mutableMapOf(Pair(symbol, currentCandle.toCandleList())))
+
+                    while (true) {
+                        val frame = incoming.receive()
+                        currentCandle = currentCandle.next()
+                        if (frame is Frame.Text) {
+                            val text = frame.readText()
+                            println("Client said: $text")
+                            bars[symbol] = currentCandle.toCandleList()
+                            send(Frame.Text(bars.toJson()))
+
+                            // debug close
+                            if (text == "CLOSE") {
+                                return@webSocket
+                            }
+                        }
                     }
                 }
             }
+
         }
     }
 }
