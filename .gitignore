@@ -10,3 +10,4 @@
 /core/build/
 config.yaml
 local.properties
+.attach*

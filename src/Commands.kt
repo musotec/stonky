@@ -1,3 +1,5 @@
+package tech.muso.stonky
+
 data class Command(val type: CommandType, val symbol: String)
 
 enum class CommandType(val string: String) {

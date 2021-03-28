@@ -25,11 +25,21 @@ object WebSocketExampleClientApp {
     @JvmStatic
     fun main(args: Array<String>) {
         runBlocking {
+
+            val config = Config.defaultConfig()
+
             // create a basic WebSocket client
             val client = HttpClient(CIO).config { install(WebSockets) }
 
-            // connect to the server (localhost:8080)
-            client.ws(method = HttpMethod.Get, host = "127.0.0.1", port = ConfigVars.PORT, path = ConfigVars.PATH_TEST_API) {
+            // connect to the server
+            client.ws(
+                method = HttpMethod.Get,
+                host = config.server.host,
+                port = config.server.port,
+                path = config.server.endpoint
+            ) {
+                println("Client Requesting @ ${call.request.url}")
+
                 send(Frame.Text("SPY")) // todo: process some JSON for real
 
                 // launch asynchronously 1000 WebSocket calls every 1000 ms

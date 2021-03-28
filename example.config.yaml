@@ -1,6 +1,6 @@
 server:
   host: 127.0.0.1
-  port: 8080 # Currently, to override the port you must set the "PORT" environment variable
+  port: 8080
   endpoint: "/test/v1/bars"
 api-keys:
   tda:

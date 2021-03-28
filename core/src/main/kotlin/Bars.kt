@@ -7,7 +7,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
  * Following the format of:
  * https://alpaca.markets/docs/api-documentation/api-v2/market-data/alpaca-data-api-v1/bars/
  */
-@JsonClass(generateAdapter = false)
+@JsonClass(generateAdapter = true)
 data class Bars(@Transient val bars: MutableMap<String, List<AbstractCandle>> = mutableMapOf()) {
 
     companion object {
@@ -24,6 +24,7 @@ data class Bars(@Transient val bars: MutableMap<String, List<AbstractCandle>> = 
         private val adapter: JsonAdapter<Map<String, List<AbstractCandle>>> = moshi.adapter(TYPE_MAP_STOCK_CANDLES)
 
         fun Bars.toJson(): String = adapter.toJson(this.bars)
+        fun fromJson(string: String): Bars? = adapter.fromJson(string)?.let { Bars(it as MutableMap<String, List<AbstractCandle>>) }
     }
 
     operator fun get(key: String) = bars[key]

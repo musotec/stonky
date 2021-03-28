@@ -1,3 +1,5 @@
+package tech.muso.stonky
+
 import io.ktor.http.cio.websocket.*
 
 object Parser {
