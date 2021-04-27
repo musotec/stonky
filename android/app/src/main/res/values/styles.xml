@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- getApp theme, that extends our :theme module's theme -->
+    <style name="AppTheme" parent="SliceTheme" >
+        <!-- Here we would add our customization -->
+        <item name="colorControlActivated">@color/colorAccentOrange</item>
+    </style>
+
+    <style name="SliceTheme" parent="FinanceTheme">
+        <item name="flavorIconText">🥧</item>
+        <item name="colorTitleTextPrimary">#eafffe</item>
+        <item name="colorTitleTextSecondary">#ffdec2</item>
+        <item name="colorPrimary">#00a6ae</item>
+        <item name="colorSurface">#0d1919</item>
+        <item name="colorOnSurface">#f7fdff</item>
+        <item name="android:statusBarColor">#1F6D8C</item>
+        <item name="android:colorBackground">#0596A6</item>
+        <item name="android:navigationBarColor">#060e0e</item>
+        <item name="colorSecondary">#d78034</item>
+        <item name="colorAccent">#F2762E</item>
+        <item name="colorError">#e22222</item>
+        <item name="colorSuccess">#90FF2E</item>
+
+<!--        /* Color Theme Swatches in Hex */-->
+<!--        <item name="color1">#1F6D8C</item>-->
+<!--        <item name="color1">#0596A6</item>-->
+<!--        <item name="color1">#05A6A6</item>-->
+<!--        <item name="color1">#F2913D</item>-->
+<!--        <item name="color1">#F2762E</item>-->
+
+    </style>
+
+    <!-- Light theme with green accents -->
+    <style name="TDAmeriTheme" parent="FinanceTheme">
+        <item name="flavorIconText">💹</item>
+        <item name="colorTitleTextPrimary">#FFFFF8E1</item> <!-- md_amber_50 -->
+        <item name="android:statusBarColor">#004d41</item>  <!-- md_teal_900 -->
+        <item name="android:colorBackground">#00695C</item> <!-- md_teal_800 -->
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">#ff000000</item>
+        <item name="colorPrimary">#ff4CAF50</item>    <!-- md_green_500 -->
+        <item name="colorOnPrimary">#ffffffff</item>
+        <item name="colorAccent">#ffff00ff</item>
+        <item name="colorShortPrimary">#ffEF5350</item>
+        <item name="colorLongPrimary">#ff43A047</item>
+        <item name="colorError">#ffb04c38</item>
+        <item name="colorSuccess">#ff32ac53</item>
+    </style>
+
+    <!-- Dark theme with red accents -->
+    <style name="TastyTheme" parent="FinanceTheme">
+        <item name="flavorIconText">🍒</item>
+        <item name="colorTitleTextSecondary">#FF9E9E9E</item>
+        <item name="colorPrimary">#e22222</item>
+        <item name="colorSurface">#0d0d0d</item>
+        <item name="android:statusBarColor">#000000</item>
+        <item name="android:colorBackground">#000000</item>
+        <item name="android:navigationBarColor">#000000</item>
+        <item name="colorSecondary">#90FF2E</item>
+        <item name="colorAccent">#FFFFFF</item>
+        <item name="colorError">#e22222</item>
+        <item name="colorSuccess">#90FF2E</item>
+    </style>
+
+    <!-- Child theme which overrides values of parent to specify that we do not have an ActionBar -->
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <!-- For our theme, define a cut in the top left corner to give us more distinct branding -->
+    <style name="ShapeAppearance.Card" parent="ShapeAppearance.MaterialComponents">
+        <item name="cornerFamily">cut</item>
+
+        <item name="cornerSizeTopLeft">@dimen/app_bar_cut_size</item>
+        <item name="cornerSizeTopRight">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="backgroundInsetTop">60dp</item>
+        <item name="android:paddingTop">60dp</item>
+        <item name="android:clipToPadding">false</item>
+        <item name="android:clipChildren">false</item>
+    </style>
+</resources>

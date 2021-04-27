@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="pairsPosition"
+            type="tech.muso.demo.common.entity.PairsTrade" />
+        <variable
+            name="longPosition"
+            type="tech.muso.demo.common.entity.StockEntity" />
+        <variable
+            name="shortPosition"
+            type="tech.muso.demo.common.entity.StockEntity" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginBottom="0dp"
+        style="@style/AppTheme.CardItem"
+        app:cardBackgroundColor="?colorSurface"
+        app:cardCornerRadius="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp">
+
+            <TextView
+                android:id="@+id/long_quantity"
+                tools:textColor="?colorOnSurface"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@{shortPosition.amount > 0 ? @color/colorAccentTeal : @color/colorAccentRed}"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/long_symbol"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/long_symbol"
+                app:layout_constraintTop_toBottomOf="@+id/price"
+                tools:text="+2" />
+
+            <TextView
+                android:id="@+id/short_quantity"
+                tools:textColor="?colorOnSurface"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{shortPosition.amount}"
+                android:textColor="@{shortPosition.amount > 0 ? @color/colorAccentTeal : @color/colorAccentRed}"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/short_symbol"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/short_symbol"
+                app:layout_constraintTop_toBottomOf="@+id/price"
+                tools:text="-2" />
+
+            <TextView
+                android:id="@+id/short_symbol"
+                tools:textColor="?colorOnSurface"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/titillium_web"
+                android:gravity="bottom"
+                android:text="@{shortPosition.symbol}"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="@{shortPosition.amount > 0 ? @color/colorAccentTeal : @color/colorAccentRed}"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toStartOf="@+id/long_symbol"
+                app:layout_constraintStart_toStartOf="@+id/right_barrier"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:text="TICK" />
+
+            <TextView
+                android:id="@+id/long_symbol"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/titillium_web"
+                android:gravity="bottom"
+                android:text="@{longPosition.symbol}"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                tools:textColor="?colorOnSurface"
+                android:textColor="@{shortPosition.amount > 0 ? @color/colorAccentTeal : @color/colorAccentRed}"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toStartOf="@+id/barrier"
+                app:layout_constraintStart_toEndOf="@+id/short_symbol"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:text="TICK" />
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:fontFamily="sans-serif-light"
+                android:text="@{pairsPosition.name}"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="?colorOnSurface"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/right_barrier"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="TICK - TICK\nPairs Trade" />
+
+            <TextView
+                android:id="@+id/price_delta"
+                tools:textColor="?colorOnSurface"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{String.format(`%.2f%`, pairsPosition.profitDay)}"
+                android:textColor="@{pairsPosition.profitDay > 0 ? @color/colorAccentTeal : @color/colorAccentRed}"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/price"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/barrier"
+                app:layout_constraintTop_toBottomOf="@+id/price"
+                tools:text="-21.37" />
+
+            <TextView
+                android:id="@+id/price"
+                android:textColor="?colorOnSurface"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-thin"
+                android:gravity="bottom"
+                android:text="@{String.format(`$%.2f`, pairsPosition.notionalValue)}"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/price_delta"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="@+id/barrier"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:text="$4.20" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/right_barrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.33" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/barrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.75" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

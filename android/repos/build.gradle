@@ -1,0 +1,46 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+/**
+ * :repos
+ *
+ * This module contains Repositories for interfacing with any of the Databases or APIs that we have.
+ * This allows for Android applications to import this library to use the objects.
+ * While not exposing any of the internal DAO/DTO classes that we might need to achieve this.
+ */
+android {
+    compileSdkVersion compile_sdk_version
+
+    defaultConfig {
+        minSdkVersion min_sdk_version
+        targetSdkVersion compile_sdk_version
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    buildFeatures {
+        viewBinding = true
+    }
+}
+
+dependencies {
+    // our dependencies
+    api project(":android:core")    // we use API here to expose the objects to modules importing this
+    implementation project(":android:database") // implementation used here to not leak the DAOs to the UI
+    implementation project(":android:repos:service")
+
+    implementation libraries
+
+    testImplementation testLibraries
+    androidTestImplementation androidTestLibraries
+}

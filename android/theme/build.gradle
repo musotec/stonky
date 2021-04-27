@@ -1,0 +1,41 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+/**
+ * :theme
+ *
+ * This module exists as library used by the :app module.
+ *
+ * It contains only the fragment for testing the display of the theme, and should only be used
+ * during development and by unit tests.
+ *
+ * Dynamic features allow us to speed up builds and testing by determining what code and tests need
+ * to be compiled. On a small project, there is minimal benefit to this internal performance gain.
+ *
+ * If a certain feature is used less frequently than others, it can be made into it's own module as
+ * a dynamic feature, and downloaded during runtime using Dynamic Delivery/Android App Bundles.
+ */
+android {
+    compileSdkVersion compile_sdk_version
+
+    defaultConfig {
+        minSdkVersion min_sdk_version
+        targetSdkVersion compile_sdk_version
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildFeatures {
+        viewBinding = true
+    }
+}
+
+dependencies {
+    implementation project(":android:graph:spark")
+    implementation project(":android:graph:graphly")
+    implementation libraries
+
+    api "org.hsluv:hsluv:0.2"
+}

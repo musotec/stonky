@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="tech.muso.stonky.android.viewmodels.stocks.PortfolioViewModel" />
+    </data>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="tech.muso.stonky.android.MainActivity">
+
+<!--    TODO: Extract guide and buffer out to custom viewgroup? -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.326" />
+
+    <View android:id="@+id/buffer" android:layout_width="match_parent" android:layout_height="48dp"
+          app:layout_constraintTop_toTopOf="@+id/guideline"/>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/stock_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:context="tech.muso.stonky.android.MainActivity"
+            tools:listitem="@layout/list_item_stock_card_view"
+            android:background="@color/colorSerenadeBgGreen"/>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <tech.muso.graphly.view.WeightedDonutGraph
+        android:id="@+id/portfolio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/buffer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_launcher_foreground"/>
+
+    <TextView
+        android:id="@+id/clear_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:shadowColor="@color/black"
+        android:shadowDx="0"
+        android:shadowDy="7"
+        android:shadowRadius="5"
+        android:text="@{viewModel.selectedSlice.toDisplayString()}"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/buffer"
+        app:layout_constraintEnd_toEndOf="@+id/portfolio" app:layout_constraintStart_toStartOf="@+id/portfolio"
+        app:layout_constraintTop_toTopOf="parent" tools:text="1234"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:onClick="@{viewModel::loadData}"
+        android:clickable="true"
+        app:layout_constraintBottom_toTopOf="@+id/buffer" app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline" app:srcCompat="@drawable/ic_baseline_pie_chart_24"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

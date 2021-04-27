@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="stonky" type="CompoundRunConfigurationType">
+    <toRun name="stonky.server" targetId="default_target" type="JarApplication" />
+    <toRun name="android.app" targetId="default_target" type="AndroidRunConfigurationType" />
+    <method v="2" />
+  </configuration>
+</component>

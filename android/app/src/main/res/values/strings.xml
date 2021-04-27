@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">stonky</string>
+    <string name="sub_name">.android</string>
+    <string name="fragment_name_pin">pin</string>
+    <string name="fragment_name_stocks">stocks</string>
+    <string name="fragment_name_theme">theme</string>
+</resources>

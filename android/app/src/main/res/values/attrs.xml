@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="buy_sell">
+        <attr name="state_short" format="boolean" />
+        <attr name="state_long" format="boolean" />
+    </declare-styleable>
+</resources>

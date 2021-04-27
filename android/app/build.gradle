@@ -1,0 +1,61 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion compile_sdk_version
+
+    defaultConfig {
+        applicationId "tech.muso.stonky.android"
+        minSdkVersion min_sdk_version
+        targetSdkVersion compile_sdk_version
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    buildFeatures {
+        viewBinding = true
+        dataBinding = true // dataBinding for LiveData connection to ViewModel
+    }
+
+    kotlinOptions {
+        jvmTarget = java_version
+    }
+
+    packagingOptions {
+        exclude "DebugProbesKt.bin"
+    }
+}
+
+dependencies {
+    implementation project(":common")
+    implementation project(":android:theme")
+    implementation project(":android:graph:spark")
+    implementation project(":android:graph:graphly")
+    implementation project(":android:repos")
+//    implementation project(":android:repos:service:tdameritrade")
+
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+
+    implementation libraries
+
+    implementation "io.ktor:ktor-client-cio:$ktor_version"
+    implementation "io.ktor:ktor-client-websockets:$ktor_version"
+    implementation "io.ktor:ktor-client-logging-jvm:$ktor_version"
+    implementation "io.ktor:ktor-serialization:$ktor_version"
+
+//    implementation("io.ktor:ktor-client-cio:$ktor_version")
+//    implementation("io.ktor:ktor-client-websockets:$ktor_version")
+//    implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
+    testImplementation testLibraries
+    androidTestImplementation androidTestLibraries
+}

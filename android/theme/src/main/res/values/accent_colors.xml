@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="colorAccentRed">#ef5350</color>
+    <color name="colorAccentOrange">#ff6d00</color>
+    <color name="colorAccentYellow">#fbc02d</color>
+    <color name="colorAccentTeal">#26a69a</color>
+    <color name="colorAccentCyan">#26c6da</color>
+    <color name="colorAccentBlue">#2196f3</color>
+    <color name="colorBackgroundBlue">#131722</color>
+
+    <color name="colorSerenadeBg0">#2A2F33</color>
+    <color name="colorSerenadeBg1">#2E3338</color>
+    <color name="colorSerenadeBg2">#31363B</color>
+    <color name="colorSerenadeBg3">#373D41</color>
+    <color name="colorSerenadeBg4">#3F464B</color>
+    <color name="colorSerenadeBgVisual">#474F54</color>
+    <color name="colorSerenadeBgRed">#614b51</color>
+    <color name="colorSerenadeBgGreen">#475054</color> <!-- #474F54 -->
+    <color name="colorSerenadeBgBlue">#415c6d</color>
+    <color name="colorSerenadeBgYellow">#5d5c50</color>
+    <color name="colorSerenadeFg">#bfddb2</color>
+    <color name="colorSerenadeRed">#d76e6e</color>
+    <color name="colorSerenadeOrange">#e5a46b</color>
+    <color name="colorSerenadeY">#c1bf89</color>
+    <color name="colorSerenadeG">#ACB765</color>
+    <color name="colorSerenadeAqua">#87c095</color>
+    <color name="colorSerenadeB">#82abbc</color>
+    <color name="colorSerenadeP">#d39bb6</color>
+    <color name="colorSerenadeGrey0">#767b82</color>
+    <color name="colorSerenadeGrey1">#7f868c</color>
+    <color name="colorSerenadeGrey2">#9aa1a8</color>
+
+<!--    <palette>-->
+<!--        <color name='dollar-bills-1' rgb='B0BF7A' r='176' g='191' b='122' />-->
+<!--        <color name='dollar-bills-2' rgb='575942' r='86' g='89' b='66' />-->
+<!--        <color name='dollar-bills-3' rgb='A5A692' r='165' g='165' b='145' />-->
+<!--        <color name='dollar-bills-4' rgb='D9D7C5' r='216' g='215' b='197' />-->
+<!--        <color name='dollar-bills-5' rgb='F2F2F2' r='242' g='242' b='242' />-->
+<!--    </palette>-->
+</resources>

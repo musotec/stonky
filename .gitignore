@@ -1,13 +1,10 @@
-/.gradle
-/.idea
-/out
-/build
-*.iml
-*.ipr
-*.iws
-/service
-/tomcat.*/
-/core/build/
-config.yaml
+# Project exclude paths
+/.gradle/
+/build/
 local.properties
+config.yaml
+
+/scratch/
 .attach*
+*.db
+*.hprof

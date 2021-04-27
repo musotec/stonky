@@ -1,0 +1,12 @@
+
+//include ':android:repos:service:tdameritrade'
+include ':android:repos:service'
+include ':android:graph:core'
+include ':android:graph:spark'
+include ':android:graph:graphly'
+include ':android:theme'
+include ':android:repos'
+include ':android:database'
+include ':android:core'
+include ':android:app'
+rootProject.name = "stonky android"

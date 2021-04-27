@@ -1,7 +1,7 @@
 server:
   host: 127.0.0.1
   port: 8080
-  endpoint: "/test/v1/bars"
+  endpoint: "/api"
 api-keys:
   tda:
     # How to obtain these:

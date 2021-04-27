@@ -1,0 +1,48 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt' // kotlin android must be prior to kapt for annotation processing
+
+/**
+ * :database
+ *
+ * This module contains the Room SQL database for backing up the application state.
+ * This module should never by included by the main :app module.
+ *
+ * This is to enforce separation of concerns. Otherwise it could become tempting to write code
+ * that would directly interface with DAOs, perform queries, etc.
+ *
+ * By having the :repos module provide repositories, we can interface without concern to any
+ * local SQL database or web service. It is also easier to write and perform effective unit tests.
+ */
+android {
+    compileSdkVersion compile_sdk_version
+
+    defaultConfig {
+        minSdkVersion min_sdk_version
+        targetSdkVersion compile_sdk_version
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation project(":android:core") // implementation on :core, as interfacing is done with the DAOs
+
+    implementation libraries
+    implementation arch_libraries   // this can have the room implementation to backup the app state
+
+    kapt librariesKapt
+
+    testImplementation testLibraries
+    androidTestImplementation androidTestLibraries
+}

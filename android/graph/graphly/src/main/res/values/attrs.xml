@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="graphly_GraphViewStyle" format="reference" />
+
+    <declare-styleable name="graphly_GraphView">
+        <attr name="graphly_lineColor" format="color|reference" />
+        <attr name="graphly_lineWidth" format="dimension|reference" />
+        <attr name="graphly_cornerRadius" format="dimension|reference" />
+        <!-- {@deprecated Use fillType instead.} -->
+        <attr name="graphly_fill" format="boolean|reference" />
+        <attr name="graphly_fillColor" format="color|reference" />
+        <attr name="graphly_fillType" format="enum">
+            <!-- must match values in SparkView.FillType -->
+            <enum name="none" value="0" />
+            <enum name="up" value="1" />
+            <enum name="down" value="2" />
+            <enum name="towardZero" value="3" />
+        </attr>
+
+        <attr name="graphly_baseLineColor" format="color|reference" />
+        <attr name="graphly_baseLineWidth" format="dimension|reference" />
+
+        <attr name="graphly_scrubLineColor" format="color|reference" />
+        <attr name="graphly_scrubLineWidth" format="dimension|reference" />
+        <attr name="graphly_scrubPointColor" format="color|reference" />
+
+        <attr name="graphly_scrubEnabled" format="boolean|reference" />
+
+        <attr name="graphly_animateChanges" format="boolean|reference" />
+    </declare-styleable>
+</resources>

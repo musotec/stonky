@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:alpha="0.9" android:color="@color/white" />
+<!--
+    &lt;!&ndash; sell state &ndash;&gt;
+    <item android:color="?attr/colorShortPrimary" android:state_enabled="true" android:state_selected="true"/>
+    <item android:color="?attr/colorShortPrimary" android:state_enabled="true" android:state_checked="true"/>
+    &lt;!&ndash; buy state &ndash;&gt;
+    <item android:color="?attr/colorLongPrimary" android:state_enabled="true"/>
+    <item android:color="?attr/colorLongPrimary"/>
+-->
+</selector>

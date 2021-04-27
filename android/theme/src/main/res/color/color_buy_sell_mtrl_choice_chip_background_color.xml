@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 24% opacity; sell color (active state) -->
+    <item android:alpha="0.62" android:color="?attr/colorShortPrimary" android:state_enabled="true" android:state_selected="true"/>
+    <item android:alpha="0.62" android:color="?attr/colorShortPrimary" android:state_enabled="true" android:state_checked="true"/>
+    <!-- 24% opacity; buy color (default state) -->
+    <item android:alpha="0.62" android:color="?attr/colorLongPrimary" android:state_enabled="true"/>
+    <item android:alpha="0.62" android:color="?attr/colorLongPrimary"/>
+
+</selector>

@@ -1,0 +1,125 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    // define project wide build parameters to allow for consistent library versions across modules.
+    ext {
+        // global variables
+        compile_sdk_version = 30
+        min_sdk_version = 24
+        java_version = JavaVersion.VERSION_11
+        gradle_tools_version = '4.2.0-rc01'  // https://mvnrepository.com/artifact/com.android.tools.build/gradle?repo=google
+        kotlin_version = "1.4.0" // deps.kotlin.version
+        ktor_version = "1.5.2"
+
+        // local variables (use def)
+        def androidx_test_version = '1.2.0'
+        def annotations_version = '1.1.0'
+        def appcompat_version = '1.1.0'
+        def constraint_layout_version = '1.1.3'
+        def coroutines_android_version = '1.3.0'
+        def expresso_version = '3.2.0'
+        def fragment_ktx_version = '1.2.0'
+        def glide_version = '4.10.0'
+        def gson_version = '2.8.6'
+        def junit_version = '4.12'
+        def lifecycle_version = '2.3.1'
+        def material_version = '1.2.0-alpha06'
+        def retrofit_gson_version = '2.6.2'
+        def retrofit_version = '2.6.2'
+        def room_version = '2.2.6'
+        def truth_version = '1.0'
+        def work_version = '2.2.0'
+
+        kotlin_stdlib = "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+        kotlin_coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_android_version"
+
+        libraries = [
+                // include kotlin by default
+                kotlin_stdlib,
+                kotlin_coroutines,
+                "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutines_android_version}",
+
+                // Android X
+                "androidx.appcompat:appcompat:$appcompat_version",
+                "com.google.android.material:material:$material_version",
+                "androidx.constraintlayout:constraintlayout:$constraint_layout_version",
+                "androidx.fragment:fragment-ktx:$fragment_ktx_version",
+
+                // ViewModel and LiveData
+                "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version",
+                "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version",
+
+                // Glide
+                "com.github.bumptech.glide:glide:$glide_version",
+                "com.google.code.gson:gson:$gson_version",
+                "com.squareup.retrofit2:converter-gson:$retrofit_gson_version",
+                "com.squareup.retrofit2:retrofit:$retrofit_version",
+
+                // threading
+                "androidx.annotation:annotation:$annotations_version"
+        ]
+
+        arch_libraries = [
+                // Room & Work Runtime
+                "androidx.work:work-runtime-ktx:$work_version",
+                "androidx.room:room-ktx:$room_version"
+        ]
+
+        librariesKapt = [
+                // Glide and Room compilers.
+                "com.github.bumptech.glide:compiler:$glide_version",
+                "androidx.room:room-compiler:$room_version"
+        ]
+
+        testLibraries = [
+                "junit:junit:$junit_version",
+
+                // Coroutines testing
+                "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_android_version",
+
+                // mocks
+                "org.mockito:mockito-core:2.23.0",
+
+                "com.google.truth:truth:$truth_version",
+        ]
+
+        androidTestLibraries = [
+                "androidx.test.ext:junit:$annotations_version",
+                "androidx.test:runner:$androidx_test_version",
+                "androidx.test:rules:$androidx_test_version",
+
+                // Espresso
+                "androidx.test.espresso:espresso-core:$expresso_version",
+                "androidx.test.espresso:espresso-contrib:$expresso_version",
+                "androidx.test.espresso:espresso-intents:$expresso_version",
+
+                // Architecture Components testing libraries
+                "androidx.work:work-testing:$work_version",
+
+        ]
+    }
+
+
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath "com.android.tools.build:gradle:$gradle_tools_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+//task clean(type: Delete) {
+//    delete rootProject.buildDir
+//}

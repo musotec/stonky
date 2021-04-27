@@ -1,0 +1,24 @@
+apply plugin: 'java-library'
+apply plugin: 'kotlin'
+
+/**
+ * :core
+ *
+ * The core library should contain all the common objects in accordance to Domain-driven design.
+ *
+ * This module should NEVER include Android code, as the common value objects and entities exist as
+ * as means to separate the concerns of the individual modules.
+ *
+ * The benefit with this approach is that the developer cannot accidentally write some code that
+ * would interface directly with any database operations or api calls, since these would be handled
+ * by the Repository, with the Repository only returning the objects/classes defined here.
+ */
+
+dependencies {
+    implementation kotlin_stdlib
+    implementation arch_libraries
+    // NOTE: never include Android libraries here!!! if you need to, you're doing something wrong!
+}
+
+sourceCompatibility = java_version
+targetCompatibility = java_version
