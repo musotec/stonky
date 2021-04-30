@@ -9,6 +9,7 @@ buildscript {
         classpath(kotlin("gradle-plugin", version = deps.kotlin.version))
         classpath(deps.android.gradlePlugin)
         classpath(deps.kotlin.serialization.plugin)
+        classpath("com.avast.gradle:gradle-docker-compose-plugin:0.14.3")
     }
 }
 

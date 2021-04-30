@@ -1,0 +1,2 @@
+The `redisdb` folder is used as a volume within the docker container for the Redis database.
+This allows the for persistence through a docker-compose up/down/up while being easily accessible for debugging.

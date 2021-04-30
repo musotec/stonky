@@ -16,6 +16,7 @@ pluginManagement {
 rootProject.name = "stonky"
 
 include(":common")
+include(":repository")
 include(":server")
 include(":config")
 include(":config:generator")
@@ -30,4 +31,3 @@ include(":android:theme")
 include(":android:repos")
 include(":android:database")
 include(":android:core")
-

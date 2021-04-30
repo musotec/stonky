@@ -1,17 +1,22 @@
 # stonky
 **stonky** is a full-stack multiplatform finance application written entirely in kotlin.
 
-**stonky.server** - is a [ktor microservice](https://ktor.io/) that acts as a middle man between stock market APIs
- allowing for local caching and playback of price history data. Allowing API emulation to avoid rate limits.
-**stonky.android** - a native android application for interfacing with the locally running stonky.server.
+**stonky.server** - is a [ktor microservice](https://ktor.io/) that acts as a middle man for stock market API data,
+allowing for playback control and interfacing with price history data streams.
+
+**stonky.repository** - is a [spring microservice](https://spring.io/projects/spring-boot) responsible as the broker
+between remote stock market APIs and *stonky.server*.
+Allowing for smart rate limiting and retrieval from a local Redis cache when applicable.
+
+**stonky.android** - a native android application for interfacing with the locally running *stonky.server*.
 
 Currently, the emulated data playback is output in the format of the [Alpaca API (v2)](https://alpaca.markets/docs/api-documentation/api-v2/).
 
 ## Development Timeline
-- ~~Android Client Interface~~
-- ~~Client Mock Portfolio UI~~
-- ~~Initial Multiplatform Project Integration~~
-- Local Redis server with API caching
+- ✅~~Android Client Interface~~
+- ✅~~Client Mock Portfolio UI~~
+- ✅~~Initial Multiplatform Project Integration~~
+- ⭕ Local Redis server with API caching
 - Alpaca v2 API as incoming data source
 - Web Frontend Client (based on [lightweight-charts](https://github.com/tradingview/lightweight-charts))
 - REST Server Portfolio endpoint

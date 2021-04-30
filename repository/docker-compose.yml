@@ -1,0 +1,6 @@
+redis:
+  build: redis/.
+  ports:
+    - "6379:6379"
+  volumes:
+    - ./redisdb:/data
