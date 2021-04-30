@@ -18,7 +18,7 @@ class DefaultStockService(val stockRepository: StockRepository) : StockService {
 
     override fun updateStock(id: String, stockDto: StockController.StockDto): Stock {
         val stock: Stock = stockRepository.findById(id).orElseThrow { StockNotFoundException("Unable to find Stock for $id id") }
-        val updatedStock = stock.copy(symbol = stockDto.name.orEmpty(), name = stockDto.genre.orEmpty(), year = stockDto.year)
+        val updatedStock = stock.copy(symbol = stockDto.symbol.orEmpty(), name = stockDto.name.orEmpty(), year = stockDto.year)
         updatedStock.id = stock.id
         return stockRepository.save(updatedStock)
     }
@@ -28,8 +28,8 @@ class DefaultStockService(val stockRepository: StockRepository) : StockService {
     override fun createStock(stockDto: StockController.StockDto): Stock =
         stockRepository.save(
             Stock(
-                symbol = stockDto.name.orEmpty(),
-                name = stockDto.genre.orEmpty(),
+                symbol = stockDto.symbol.orEmpty(),
+                name = stockDto.name.orEmpty(),
                 year = stockDto.year
             )
         )

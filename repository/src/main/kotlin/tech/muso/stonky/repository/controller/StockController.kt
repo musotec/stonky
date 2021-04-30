@@ -42,8 +42,8 @@ class StockController(
 //    private fun subscribeToStock(): Subscriber = subscriptionService.subscribe(Subscriber())
 
     data class StockDto(
-            @get:NotBlank val name: String?,
-            @get:NotBlank val genre: String?,
-            @get:Min(value = 1900) @PastOrPresent val year: Int
+        @get:NotBlank val symbol: String?,
+        @get:NotBlank val name: String?,
+        @get:Min(value = 1900) @PastOrPresent val year: Int
     )
 }

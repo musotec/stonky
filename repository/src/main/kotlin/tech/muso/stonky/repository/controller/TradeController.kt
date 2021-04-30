@@ -47,7 +47,7 @@ class TradeController(val tradeService: TradeService) {
     data class TradeDto(
             @get:NotBlank val foo: String,
             @get:NotBlank val bar: String,
-            @field:DateTimeFormat(pattern = "yyyy-MM-dd")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             @field:JsonDeserialize(using = LocalDateDeserializer::class)
             @field:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
             @get:Past val date: LocalDate
