@@ -8,7 +8,9 @@ import org.springframework.data.redis.listener.ChannelTopic
 import org.springframework.stereotype.Component
 
 @Component
-class TradeAddedProducer(val template: RedisTemplate<String, Any>, val channelTopic: ChannelTopic) {
+class TradeAddedProducer(
+//    val template: RedisTemplate<String, Any>,
+    val channelTopic: ChannelTopic) {
 
     companion object {
         val logger : Logger = LoggerFactory.getLogger(TradeAddedProducer::class.java)
@@ -16,6 +18,6 @@ class TradeAddedProducer(val template: RedisTemplate<String, Any>, val channelTo
 
     fun publish(stock: Stock) {
         logger.info("Notifying subscribers on adding a new Trade {} {}", stock.id, stock.symbol)
-        template.convertAndSend(channelTopic.topic, stock)
+//        template.convertAndSend(channelTopic.topic, stock)
     }
 }

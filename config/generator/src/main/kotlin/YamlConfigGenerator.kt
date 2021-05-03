@@ -23,6 +23,7 @@ fun main() {
         .initializer("%S", config.server.endpoint)
         .build()
 
+    // TODO-1: API keys should be loaded on the fly from config.yaml
     // generate Config.ApiKeys.*
     val apiKeys = TypeSpec.objectBuilder("ApiKeys").run {
 

@@ -13,6 +13,12 @@ version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 dependencies {
+    implementation(project(":config"))
+    implementation(project(":common"))
+
+    // TD Ameritrade API for server data sourcing.
+    implementation("com.studerw.tda:td-ameritrade-client:2.4.0")
+
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
@@ -22,6 +28,9 @@ dependencies {
 
     // Lettuce > Jedis for async applications.
     implementation("io.lettuce:lettuce-core:6.1.1.RELEASE")
+
+    // CBOR serialization, more compact than json.
+    implementation(deps.kotlin.serialization.cbor)
 
     // do everything in JSON first for debugging // TODO: remove and use byte serialization
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.9")
@@ -45,5 +54,7 @@ tasks.withType<Test> {
 
 dockerCompose {
     useComposeFiles = listOf("docker-compose.yml")
-//	upAdditionalArgs = listOf("-V redis.conf:/usr/local/etc/redis/redis.conf")
+    captureContainersOutput = true
+    // TODO: verify that the redis.conf is respected and remove these comments.
+//	upAdditionalArgs = listOf("-V redis.conf:/usr/local/etc/redis/redis.conf")  // TODO: configure --ip to only listen on local addresses
 }

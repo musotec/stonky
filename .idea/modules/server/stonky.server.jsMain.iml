@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.system.module.type="sourceSet" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <output url="file://$MODULE_DIR$/../../../server/build/classes/java/main" />
+    <output-test url="file://$MODULE_DIR$/../../../server/build/classes/java/test" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../../server/build/externals/stonky-server/src" />
+    <content url="file://$MODULE_DIR$/../../../server/src/jsMain">
+      <sourceFolder url="file://$MODULE_DIR$/../../../server/src/jsMain/kotlin" type="kotlin-source" />
+    </content>
+    <orderEntry type="jdk" jdkName="Kotlin SDK" jdkType="KotlinSDK" />
+    <orderEntry type="module" module-name="stonky.common.commonMain" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="stonky.server.commonMain" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../build/js/node_modules/react/index.js" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../build/js/node_modules/react-dom/index.js" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="stonky.common.jsMain" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.4.0" level="project" />
+    <orderEntry type="module" module-name="stonky.common.commonMain" />
+    <orderEntry type="library" name="Gradle: io.ktor:ktor-client-js:1.4.0" level="project" />
+    <orderEntry type="library" name="Gradle: io.ktor:ktor-client-json-metadata:commonMain:1.4.0" level="project" />
+    <orderEntry type="library" name="Gradle: io.ktor:ktor-client-serialization-js:1.4.0" level="project" />
+    <orderEntry type="library" name="Gradle: io.ktor:ktor-client-json-js:1.4.0" level="project" />
+    <orderEntry type="library" name="Gradle: io.ktor:ktor-client-serialization-metadata:commonMain:1.4.0" level="project" />
+    <orderEntry type="library" name="Gradle: io.ktor:ktor-client-js-metadata:commonMain:1.4.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains:kotlin-react-dom:16.13.1-pre.110-kotlin-1.4.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-js:1.4.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains:kotlin-react:16.13.1-pre.110-kotlin-1.4.0" level="project" />
+    <orderEntry type="module-library">
+      <library name="Gradle: io.ktor:ktor-client-core-metadata:commonMain:1.4.0">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../.gradle/kotlin/sourceSetMetadata/server.stonky/jsMain/implementation/io.ktor-ktor-client-core-metadata/io.ktor-ktor-client-core-metadata-commonMain.klib!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-client-core-metadata/1.4.0/b480068906ea27cc1623227e480823a73c35903a/ktor-client-core-metadata-1.4.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-js:1.4.32" level="project" />
+    <orderEntry type="module-library">
+      <library name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.4.32">
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.4.32/ef50bfa2c0491a11dcc35d9822edbfd6170e1ea2/kotlin-stdlib-common-1.4.32.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.4.32/5b8f86fea035328fc9e8c660773037a3401ce25f/kotlin-stdlib-common-1.4.32-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.4.32/f3e47c26a177728549b3dd2a624fec333aa17b36/kotlin-stdlib-common-1.4.32-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlinx:kotlinx-coroutines-core-metadata:commonMain:1.3.8-native-mt-1.4.0-rc" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlinx:kotlinx-serialization-core-metadata:commonMain:1.0.0-RC" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains:kotlin-extensions:1.0.1-pre.110-kotlin-1.4.0" level="project" />
+    <orderEntry type="module-library">
+      <library name="Gradle: io.ktor:ktor-http-cio-metadata:commonMain:1.4.0">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../.gradle/kotlin/sourceSetMetadata/server.stonky/jsMain/implementation/io.ktor-ktor-http-cio-metadata/io.ktor-ktor-http-cio-metadata-commonMain.klib!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-http-cio-metadata/1.4.0/2bab77d39645005d3e6133c14f5c1d6d9f9de56/ktor-http-cio-metadata-1.4.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlinx:kotlinx-html-js:0.7.2" level="project" />
+    <orderEntry type="library" name="Gradle: io.ktor:ktor-client-core-js:1.4.0" level="project" />
+    <orderEntry type="module-library">
+      <library name="Gradle: io.ktor:ktor-http-metadata:commonMain:1.4.0">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../.gradle/kotlin/sourceSetMetadata/server.stonky/jsMain/implementation/io.ktor-ktor-http-metadata/io.ktor-ktor-http-metadata-commonMain.klib!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-http-metadata/1.4.0/136f3e106eb3bfd422247cf8e6c34b5babf09fef/ktor-http-metadata-1.4.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Gradle: io.ktor:ktor-utils-metadata:commonMain:1.4.0">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../.gradle/kotlin/sourceSetMetadata/server.stonky/jsMain/implementation/io.ktor-ktor-utils-metadata/io.ktor-ktor-utils-metadata-commonMain.klib!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-utils-metadata/1.4.0/9db3d8b521582f9bc9edfb8820923b0d042633f5/ktor-utils-metadata-1.4.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlinx:kotlinx-serialization-core-js:1.0.0-RC" level="project" />
+    <orderEntry type="module-library">
+      <library name="Gradle: io.ktor:ktor-io-metadata:commonMain:1.4.0">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../.gradle/kotlin/sourceSetMetadata/server.stonky/jsMain/implementation/io.ktor-ktor-io-metadata/io.ktor-ktor-io-metadata-commonMain.klib!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-io-metadata/1.4.0/ed63e1e44a319f2bcdc800ee20f955648aae04f9/ktor-io-metadata-1.4.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.3.9" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.jetbrains.kotlinx:kotlinx-serialization-json-js:1.0.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlinx:atomicfu-js:0.14.4" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.jetbrains.kotlinx:kotlinx-serialization-core-js:1.0.0" level="project" />
+    <orderEntry type="library" name="Gradle: io.ktor:ktor-http-cio-js:1.4.0" level="project" />
+    <orderEntry type="library" name="Gradle: io.ktor:ktor-http-js:1.4.0" level="project" />
+    <orderEntry type="library" name="Gradle: io.ktor:ktor-utils-js:1.4.0" level="project" />
+    <orderEntry type="library" name="Gradle: io.ktor:ktor-io-js:1.4.0" level="project" />
+  </component>
+</module>

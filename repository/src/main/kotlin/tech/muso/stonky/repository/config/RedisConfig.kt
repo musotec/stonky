@@ -1,5 +1,9 @@
 package tech.muso.stonky.repository.config
 
+import Candle
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.cbor.Cbor
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -10,9 +14,13 @@ import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.listener.ChannelTopic
 import org.springframework.data.redis.listener.RedisMessageListenerContainer
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer
+import org.springframework.data.redis.repository.configuration.EnableRedisRepositories
+import org.springframework.data.redis.serializer.RedisSerializer
+import org.springframework.data.redis.serializer.StringRedisSerializer
+
 
 @Configuration
+@EnableRedisRepositories
 class RedisConfig(val messageListener: MessageListener) {
 
     @Value("\${spring.redis.host}")
@@ -30,11 +38,31 @@ class RedisConfig(val messageListener: MessageListener) {
         return factory
     }
 
+//    @Bean
+//    fun redisTemplate(): RedisTemplate<String, Any> {
+//        val template: RedisTemplate<String, Any> = RedisTemplate()
+//        template.setConnectionFactory(redisConnectionFactory())
+//        template.keySerializer = StringRedisSerializer()
+////        template.valueSerializer = KotlinSerializationJsonHttpMessageConverter()
+//        template.valueSerializer = GenericJackson2JsonRedisSerializer()
+////        template.valueSerializer = RedisSerializer.byteArray()
+//        return template
+//    }
+
+    @OptIn(ExperimentalSerializationApi::class)
     @Bean
-    fun redisTemplate(): RedisTemplate<String, Any> {
-        val template: RedisTemplate<String, Any> = RedisTemplate()
+    fun redisCandleTemplate(): RedisTemplate<String, Candle> {
+        val template: RedisTemplate<String, Candle> = RedisTemplate()
         template.setConnectionFactory(redisConnectionFactory())
-        template.valueSerializer = GenericJackson2JsonRedisSerializer()
+        template.keySerializer = StringRedisSerializer()
+        template.valueSerializer = object : RedisSerializer<Candle> {
+            // TODO: compare CBOR/Proto/json/etc speed for serialization from kotlinx.serialization
+            //   https://github.com/Kotlin/kotlinx.serialization/blob/master/docs/formats.md#protobuf-experimental
+            val serializer: KSerializer<Candle> = Candle.serializer()
+            override fun serialize(t: Candle?): ByteArray = Cbor.encodeToByteArray(serializer, t!!)
+            override fun deserialize(bytes: ByteArray?): Candle = Cbor.decodeFromByteArray(serializer, bytes!!)
+        }
+
         return template
     }
 
@@ -51,4 +79,17 @@ class RedisConfig(val messageListener: MessageListener) {
         container.addMessageListener(newMessageListener(), topic())
         return container
     }
+
+//    @Bean
+//    fun keyValueMappingContext(): RedisMappingContext? {
+//        return RedisMappingContext(
+//            MappingConfiguration(IndexConfiguration(), MyKeyspaceConfiguration())
+//        )
+//    }
+//
+//    class MyKeyspaceConfiguration : KeyspaceConfiguration() {
+//        override fun initialConfiguration(): Iterable<KeyspaceSettings> {
+//            return Collections.singleton(KeyspaceSettings(BarCandle::class.java, "candles"))
+//        }
+//    }
 }

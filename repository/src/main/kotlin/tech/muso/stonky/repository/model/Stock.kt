@@ -5,7 +5,7 @@ import org.springframework.data.annotation.Reference
 import org.springframework.data.redis.core.RedisHash
 import org.springframework.data.redis.core.index.Indexed
 
-@RedisHash("Stocks")
+@RedisHash("stocks")
 data class Stock(
     @Indexed val symbol: String,
     val name: String,

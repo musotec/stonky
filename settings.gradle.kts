@@ -22,7 +22,6 @@ include(":config")
 include(":config:generator")
 
 include(":android:app")
-//include(":android:repos:service:tdameritrade")
 include(":android:repos:service")
 include(":android:graph:core")
 include(":android:graph:spark")
