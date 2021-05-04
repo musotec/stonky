@@ -14,6 +14,10 @@ import tech.muso.stonky.repository.TdaRepository
 import tech.muso.stonky.repository.toCandle
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
+import io.ktor.client.features.*
+import io.ktor.client.features.get
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import tech.muso.stonky.config.Config
 
 fun Route.routeWebSocketPriceHistory(client: HttpClient) {
@@ -26,37 +30,29 @@ fun Route.routeWebSocketPriceHistory(client: HttpClient) {
 
         when (command.type) {
             CommandType.CANDLE_REPLAY -> {
-//                val response: HttpResponse = client.get("https://ktor.io/")
-//                val symbol = command.symbol
-//
-//                val result = TdaControllerApi().getPriceHistoryUsingGET(symbol, System.currentTimeMillis()/1000).candles
-//                println("$result")
-//                result.forEach {
-//                    val clientResponseFrame = incoming.receive()
-//                    if (clientResponseFrame is Frame.Text) {
-//                        val text = clientResponseFrame.readText()
-//
-//                        println("Client said: $text [$it]")
-//
-//                       send(
-//                            Frame.Text(
-//                                Bars(symbol, Candle(
-//                                    timeSeconds = it.timeSeconds,
-//                                    open = it.open,
-//                                    close = it.close,
-//                                    high = it.high,
-//                                    low = it.low,
-//                                    volume = it.volume
-//                                )).toJson()
-//                            )
-//                        )
-//
-//                        // debug close
-//                        if (text == "CLOSE") {
-//                            close(CloseReason(CloseReason.Codes.NORMAL, "Client said BYE"))
-//                        }
-//                    }
-//                }
+                val symbol = command.symbol
+                val response: HttpResponse = client.get("http://localhost:8081/v1/marketdata/$symbol/priceHistory") // ?dayWithUnixTimestamp=1619780400")
+                val result = Bars.fromJson(response.readText())
+
+                result.candles.forEach {
+                    val clientResponseFrame = incoming.receive()
+                    if (clientResponseFrame is Frame.Text) {
+                        val text = clientResponseFrame.readText()
+
+                        println("Client said: $text [$it]")
+
+                       send(
+                            Frame.Text(
+                                Bars(symbol, it).toJson()
+                            )
+                        )
+
+                        // debug close
+                        if (text == "CLOSE") {
+                            close(CloseReason(CloseReason.Codes.NORMAL, "Client said BYE"))
+                        }
+                    }
+                }
             }
             CommandType.CANDLE_SIMULATE -> {
 //                val symbol = "MOCK"
