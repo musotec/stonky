@@ -33,7 +33,7 @@ kotlin {
                 implementation(deps.kotlin.ktor.logging)
                 implementation(deps.kotlin.serialization.jvm)
                 deps.kotlin.ktor.server.all.forEach { implementation(it) }
-
+                deps.kotlin.ktor.client.all.forEach { implementation(it) }
 
 //                implementation("org.litote.kmongo:kmongo-coroutine-serialization:4.1.1")
 

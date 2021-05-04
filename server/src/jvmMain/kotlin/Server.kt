@@ -3,6 +3,8 @@ import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.http.cio.websocket.*
 import io.ktor.http.content.*
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
@@ -54,6 +56,10 @@ fun main() {
             method(HttpMethod.Post)
             method(HttpMethod.Delete)
             anyHost()
+        }
+
+        val client = HttpClient(CIO) {
+//            install(Logging)
         }
 
         install(Compression) {
@@ -109,7 +115,7 @@ fun main() {
                 }
             }
 
-            routeWebSocketPriceHistory()
+            routeWebSocketPriceHistory(client)
             routeWebSocketQuotes()
             routeWebSocketPortfolios()
 //            routeWebSocketTester()

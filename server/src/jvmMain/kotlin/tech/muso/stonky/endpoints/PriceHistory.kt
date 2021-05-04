@@ -12,9 +12,11 @@ import tech.muso.stonky.CommandType
 import tech.muso.stonky.Parser
 import tech.muso.stonky.repository.TdaRepository
 import tech.muso.stonky.repository.toCandle
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
 import tech.muso.stonky.config.Config
 
-fun Route.routeWebSocketPriceHistory() {
+fun Route.routeWebSocketPriceHistory(client: HttpClient) {
     webSocket(Config.server.endpoint + Bars.path) {
         send(Frame.Text("CONNECTED TO STONKY SERVER"))
 
@@ -24,6 +26,7 @@ fun Route.routeWebSocketPriceHistory() {
 
         when (command.type) {
             CommandType.CANDLE_REPLAY -> {
+//                val response: HttpResponse = client.get("https://ktor.io/")
 //                val symbol = command.symbol
 //
 //                val result = TdaControllerApi().getPriceHistoryUsingGET(symbol, System.currentTimeMillis()/1000).candles

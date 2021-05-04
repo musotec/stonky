@@ -2,9 +2,8 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="11">
-      <module name="stonky.repository.spring-swagger-codegen-api-client" target="1.7" />
-      <module name="stonky.repository.spring-swagger-codegen-api-client.main" target="1.7" />
-      <module name="stonky.repository.spring-swagger-codegen-api-client.test" target="1.7" />
+      <module name="github.stonky.android.core.main" target="11" />
+      <module name="github.stonky.android.core.test" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

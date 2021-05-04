@@ -38,9 +38,9 @@ object deps {
             }
 
             object client {
-
-                const val x = "io.ktor:ktor-client-cio:${ktorVersion}"
-                const val y = "io.ktor:ktor-client-logging-jvm:${ktorVersion}"
+                private const val x = "io.ktor:ktor-client-cio:${ktorVersion}"
+                private const val y = "io.ktor:ktor-client-logging-jvm:${ktorVersion}"
+                val all = arrayOf(x, y)
             }
         }
 
