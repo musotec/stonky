@@ -1,4 +1,4 @@
-# stonky.repository
+# stonky.broker
 This module is the repository microservice for stonky. The goal of the module is to provide routing for stonky's own API.
 This allows for smart management of API calls, returning locally cached results if available by using a Redis database.
 
@@ -53,4 +53,4 @@ See Also: *[Redis (server) Command Reference](https://redis.io/commands#server)*
 If you are getting 500 for the response from an API call, this is due to a Redis connection failure.
 Make sure your `application.properties` has the correct parameters and that the Redis server is running.
 
-You can launch the redis server from the `:repository:docker:composeUp` gradle task.
+You can launch the redis server from the `:broker:docker:composeUp` gradle task.

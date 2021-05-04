@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module external.system.module.type="sourceSet" type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager">
-    <output url="file://$MODULE_DIR$/../../../repository/build/classes/java/main" />
-    <output-test url="file://$MODULE_DIR$/../../../repository/build/classes/java/test" />
+    <output url="file://$MODULE_DIR$/../../../broker/build/classes/java/main" />
+    <output-test url="file://$MODULE_DIR$/../../../broker/build/classes/java/test" />
     <exclude-output />
-    <content url="file://$MODULE_DIR$/../../../repository/src/main">
-      <sourceFolder url="file://$MODULE_DIR$/../../../repository/src/main/kotlin" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../../../repository/src/main/resources" type="java-resource" />
+    <content url="file://$MODULE_DIR$/../../../broker/src/main">
+      <sourceFolder url="file://$MODULE_DIR$/../../../broker/src/main/kotlin" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../broker/src/main/resources" type="java-resource" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -1,6 +1,7 @@
 package tech.muso.stonky.endpoints
 
 import Bars
+import Candle
 import Bars.Companion.toJson
 import com.studerw.tda.model.history.FrequencyType
 import com.studerw.tda.model.history.PriceHistReq
@@ -13,7 +14,6 @@ import tech.muso.stonky.repository.TdaRepository
 import tech.muso.stonky.repository.toCandle
 import tech.muso.stonky.config.Config
 
-
 fun Route.routeWebSocketPriceHistory() {
     webSocket(Config.server.endpoint + Bars.path) {
         send(Frame.Text("CONNECTED TO STONKY SERVER"))
@@ -24,41 +24,36 @@ fun Route.routeWebSocketPriceHistory() {
 
         when (command.type) {
             CommandType.CANDLE_REPLAY -> {
-                val symbol = command.symbol
-
-                val tdaClient = TdaRepository.getInstance()
-                // TODO: determine start date from
-                val startDate = System.currentTimeMillis() - (1000 * 60 * 60 * 24 * 4) // get previous day of price history (at most 3 day weekend)
-
-                val request = PriceHistReq.Builder.priceHistReq()
-                    .withSymbol(symbol)
-                    .withStartDate(startDate)
-                    .withFrequencyType(FrequencyType.minute)
-                    .withFrequency(1)
-                    .build()
-                val priceHistory = tdaClient.priceHistory(request)
-
-                priceHistory.candles
-                    .subList(priceHistory.candles.size - 400, priceHistory.candles.size - 1)
-                    .forEach {
-                    val clientResponseFrame = incoming.receive()
-                    if (clientResponseFrame is Frame.Text) {
-                        val text = clientResponseFrame.readText()
-
-                        println("Client said: $text")
-
-                       send(
-                            Frame.Text(
-                                Bars(symbol, it.toCandle()).toJson()
-                            )
-                        )
-
-                        // debug close
-                        if (text == "CLOSE") {
-                            close(CloseReason(CloseReason.Codes.NORMAL, "Client said BYE"))
-                        }
-                    }
-                }
+//                val symbol = command.symbol
+//
+//                val result = TdaControllerApi().getPriceHistoryUsingGET(symbol, System.currentTimeMillis()/1000).candles
+//                println("$result")
+//                result.forEach {
+//                    val clientResponseFrame = incoming.receive()
+//                    if (clientResponseFrame is Frame.Text) {
+//                        val text = clientResponseFrame.readText()
+//
+//                        println("Client said: $text [$it]")
+//
+//                       send(
+//                            Frame.Text(
+//                                Bars(symbol, Candle(
+//                                    timeSeconds = it.timeSeconds,
+//                                    open = it.open,
+//                                    close = it.close,
+//                                    high = it.high,
+//                                    low = it.low,
+//                                    volume = it.volume
+//                                )).toJson()
+//                            )
+//                        )
+//
+//                        // debug close
+//                        if (text == "CLOSE") {
+//                            close(CloseReason(CloseReason.Codes.NORMAL, "Client said BYE"))
+//                        }
+//                    }
+//                }
             }
             CommandType.CANDLE_SIMULATE -> {
 //                val symbol = "MOCK"

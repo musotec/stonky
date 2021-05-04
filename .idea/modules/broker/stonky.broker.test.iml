@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module external.system.module.type="sourceSet" type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager">
-    <output url="file://$MODULE_DIR$/../../../repository/build/classes/java/main" />
-    <output-test url="file://$MODULE_DIR$/../../../repository/build/classes/java/test" />
+    <output url="file://$MODULE_DIR$/../../../broker/build/classes/java/main" />
+    <output-test url="file://$MODULE_DIR$/../../../broker/build/classes/java/test" />
     <exclude-output />
-    <content url="file://$MODULE_DIR$/../../../repository/src/test">
-      <sourceFolder url="file://$MODULE_DIR$/../../../repository/src/test/kotlin" isTestSource="true" />
+    <content url="file://$MODULE_DIR$/../../../broker/src/test">
+      <sourceFolder url="file://$MODULE_DIR$/../../../broker/src/test/kotlin" isTestSource="true" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -222,5 +222,4 @@
     <orderEntry type="library" scope="RUNTIME" name="Gradle: io.ktor:ktor-utils-jvm:1.4.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: io.ktor:ktor-io-jvm:1.4.0" level="project" />
   </component>
-  <component name="TestModuleProperties" production-module="stonky.broker.main" />
 </module>

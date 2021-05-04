@@ -278,32 +278,32 @@ class GraphStockFragment : Fragment(), LifecycleOwner {
 //                                        }
                                     }
                                 }.also {
-                                    it.invokeOnCompletion {
-                                        println("subscribe job completed [$it]")
-
-                                        if (it == null) {
-                                            job = CoroutineScope(Dispatchers.IO).launch {
-                                                val flow = subscribe(symbol, "/quote")
-                                                flow.collect { response ->
-                                                    val c = if (queue.isEmpty()) {
-                                                        CandleGraphable.EMPTY_CANDLE
-                                                    } else queue.removeLast()
-
-//                                                    println("SERVER: updating $c")
-
-                                                    val price =
-                                                        response.substringBefore(':').toFloat()
-                                                    val time = response.substringAfter(':').toLong()
-                                                    if (c is CandleGraphable) {
-                                                        c.update(price, time).forEach { candle ->
-                                                            println("SERVER: adding $candle")
-                                                            queue.add(candle)
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
+//                                    it.invokeOnCompletion {
+//                                        println("subscribe job completed [$it]")
+//
+//                                        if (it == null) {
+//                                            job = CoroutineScope(Dispatchers.IO).launch {
+//                                                val flow = subscribe(symbol, "/quote")
+//                                                flow.collect { response ->
+//                                                    val c = if (queue.isEmpty()) {
+//                                                        CandleGraphable.EMPTY_CANDLE
+//                                                    } else queue.removeLast()
+//
+////                                                    println("SERVER: updating $c")
+//
+//                                                    val price =
+//                                                        response.substringBefore(':').toFloat()
+//                                                    val time = response.substringAfter(':').toLong()
+//                                                    if (c is CandleGraphable) {
+//                                                        c.update(price, time).forEach { candle ->
+//                                                            println("SERVER: adding $candle")
+//                                                            queue.add(candle)
+//                                                        }
+//                                                    }
+//                                                }
+//                                            }
+//                                        }
+//                                    }
                                 }
                             }
                         }

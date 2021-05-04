@@ -38,8 +38,8 @@ android {
 
 dependencies {
     api project(":android:graph:core")
-//    api files('libs/rekoil-0.0.3-20210330.155543-8.jar')
-    api "tech.muso.rekoil:rekoil:0.0.3"
+    api files('libs/rekoil-0.0.3-20210330.155543-8.jar')
+//    api "tech.muso.rekoil:rekoil:0.0.3"
 
     implementation libraries
 

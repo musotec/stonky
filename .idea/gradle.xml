@@ -21,38 +21,11 @@
             <option value="$PROJECT_DIR$/android/repos" />
             <option value="$PROJECT_DIR$/android/repos/service" />
             <option value="$PROJECT_DIR$/android/theme" />
+            <option value="$PROJECT_DIR$/broker" />
             <option value="$PROJECT_DIR$/buildSrc" />
             <option value="$PROJECT_DIR$/common" />
             <option value="$PROJECT_DIR$/config" />
             <option value="$PROJECT_DIR$/config/generator" />
-            <option value="$PROJECT_DIR$/repository" />
-            <option value="$PROJECT_DIR$/server" />
-          </set>
-        </option>
-      </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="distributionType" value="DEFAULT_WRAPPED" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/repository" />
-        <option name="gradleJvm" value="11" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/android" />
-            <option value="$PROJECT_DIR$/android/app" />
-            <option value="$PROJECT_DIR$/android/core" />
-            <option value="$PROJECT_DIR$/android/database" />
-            <option value="$PROJECT_DIR$/android/graph" />
-            <option value="$PROJECT_DIR$/android/graph/core" />
-            <option value="$PROJECT_DIR$/android/graph/graphly" />
-            <option value="$PROJECT_DIR$/android/graph/spark" />
-            <option value="$PROJECT_DIR$/android/repos" />
-            <option value="$PROJECT_DIR$/android/repos/service" />
-            <option value="$PROJECT_DIR$/android/theme" />
-            <option value="$PROJECT_DIR$/buildSrc" />
-            <option value="$PROJECT_DIR$/common" />
-            <option value="$PROJECT_DIR$/config" />
-            <option value="$PROJECT_DIR$/config/generator" />
-            <option value="$PROJECT_DIR$/repository" />
             <option value="$PROJECT_DIR$/server" />
           </set>
         </option>

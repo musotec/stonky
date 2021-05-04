@@ -16,7 +16,7 @@ pluginManagement {
 rootProject.name = "stonky"
 
 include(":common")
-include(":repository")
+include(":broker")
 include(":server")
 include(":config")
 include(":config:generator")

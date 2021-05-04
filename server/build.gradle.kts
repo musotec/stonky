@@ -9,8 +9,10 @@ plugins {
 
 group = "tech.muso.stonky.server"
 version = "0.1.0-SNAPSHOT"
+
 dependencies {
     implementation(project(mapOf("path" to ":common")))
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 kotlin {
