@@ -1,7 +1,9 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="stonky" type="CompoundRunConfigurationType">
     <toRun name="stonky.server" targetId="default_target" type="JarApplication" />
-    <toRun name="android.app" targetId="default_target" type="AndroidRunConfigurationType" />
+    <toRun name="stonky.android.app" type="AndroidRunConfigurationType" />
+    <toRun name="stonky.broker" type="Application" />
+    <toRun name="stonky.broker.redis" type="GradleRunConfiguration" />
     <method v="2" />
   </configuration>
 </component>
