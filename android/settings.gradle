@@ -9,4 +9,4 @@ include ':android:repos'
 include ':android:database'
 include ':android:core'
 include ':android:app'
-rootProject.name = "stonky android"
+//rootProject.name = "stonky android"

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android/stonky.android.iml" filepath="$PROJECT_DIR$/.idea/modules/android/stonky.android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android/app/stonky.android.app.iml" filepath="$PROJECT_DIR$/.idea/modules/android/app/stonky.android.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android/core/stonky.android.core.iml" filepath="$PROJECT_DIR$/.idea/modules/android/core/stonky.android.core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android/core/stonky.android.core.main.iml" filepath="$PROJECT_DIR$/.idea/modules/android/core/stonky.android.core.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android/core/stonky.android.core.test.iml" filepath="$PROJECT_DIR$/.idea/modules/android/core/stonky.android.core.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android/database/stonky.android.database.iml" filepath="$PROJECT_DIR$/.idea/modules/android/database/stonky.android.database.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android/graph/stonky.android.graph.iml" filepath="$PROJECT_DIR$/.idea/modules/android/graph/stonky.android.graph.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android/graph/core/stonky.android.graph.core.iml" filepath="$PROJECT_DIR$/.idea/modules/android/graph/core/stonky.android.graph.core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android/graph/graphly/stonky.android.graph.graphly.iml" filepath="$PROJECT_DIR$/.idea/modules/android/graph/graphly/stonky.android.graph.graphly.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android/graph/spark/stonky.android.graph.spark.iml" filepath="$PROJECT_DIR$/.idea/modules/android/graph/spark/stonky.android.graph.spark.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android/repos/stonky.android.repos.iml" filepath="$PROJECT_DIR$/.idea/modules/android/repos/stonky.android.repos.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android/repos/service/stonky.android.repos.service.iml" filepath="$PROJECT_DIR$/.idea/modules/android/repos/service/stonky.android.repos.service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android/theme/stonky.android.theme.iml" filepath="$PROJECT_DIR$/.idea/modules/android/theme/stonky.android.theme.iml" />
+    </modules>
+  </component>
+</project>

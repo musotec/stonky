@@ -5,7 +5,7 @@ object deps {
     const val jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
 
     object android {
-        const val gradlePlugin = "com.android.tools.build:gradle:4.2.0-rc01"  // old version needed for IntelliJ 4.1 support
+        const val gradlePlugin = "com.android.tools.build:gradle:4.0.2" //2.0-rc01"  // old version needed for IntelliJ 4.1 support
     }
 
     object kotlin {

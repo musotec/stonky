@@ -1,3 +1,4 @@
+
 pluginManagement {
     repositories {
         maven { setUrl("https://dl.bintray.com/kotlin/kotlin-eap") }
@@ -21,6 +22,8 @@ include(":server")
 include(":config")
 include(":config:generator")
 
+//include(":client")
+include(":android:app")
 include(":android:app")
 include(":android:repos:service")
 include(":android:graph:core")
