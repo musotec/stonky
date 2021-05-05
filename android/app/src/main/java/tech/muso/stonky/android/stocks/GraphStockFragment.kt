@@ -15,6 +15,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -100,10 +101,16 @@ class GraphStockFragment : Fragment(), LifecycleOwner {
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
             val rekoilScope = RekoilScope(lifecycleScope + this.coroutineContext + Dispatchers.Main)
 
+            var setTextJob: Job? = null
             val stock: Atom<String> = rekoilScope.atom { defaultStock }
-//            inputTextView.addTextChangedListener {
-//                stock.value = it?.toString() ?: ""
-//            }
+            // when input text changes, then load from server
+            inputTextView.addTextChangedListener {
+                setTextJob?.cancel()
+                setTextJob = launch {
+                    delay(1000)
+                    stock.value = it?.toString() ?: ""
+                }
+            }
 
             inputTextView.setOnFocusChangeListener { v, hasFocus ->
                 if (!hasFocus) {
