@@ -65,52 +65,53 @@ class DefaultAlpacaService(
         )
     }
 
-    override fun getCachedTrades(symbol: String, table: String, offset: Long, startTimeEpochSeconds: Long): TradeSet {
+    override fun getCachedTrades(symbol: String, table: String, offset: Long, startTimeEpochSeconds: Long, endTimeEpochSeconds: Long): TradeSet {
         val dayName = LocalDateTime.ofEpochSecond(offset, 0, ZoneOffset.UTC).format(DateTimeFormatter.BASIC_ISO_DATE)
 
         val tableName = "$table:$dayName"
         println("LOOKING IN TABLE $tableName")
         // TODO: determine how many different days to span (currently just one) and return the joined sets across the tables.
         //  NOTE: offset will need to change with the day + 24*60*60
-        val l: Set<Trade> = template.opsForZSet().rangeByScore(tableName, (startTimeEpochSeconds - offset).toDouble(), Double.MAX_VALUE) as Set<Trade>
+        val l: Set<Trade> = template.opsForZSet().rangeByScore(tableName, (startTimeEpochSeconds - offset).toDouble(), (endTimeEpochSeconds - offset).toDouble()) as Set<Trade>
 
-        // Alternative, which returns all the data for the day.
+        // Alternative, which returns all the data for the day. (not just in range)
 //        val l = template.opsForZSet().range(tableName, 0, -1) as Set<Trade>
         return TradeSet(symbol, l.toList(), cached=true)
     }
 
     override fun cacheTrades(table: String, trades: List<Trade>, offset: Long): Boolean? {
         println("CACHING TRADES IN TABLE $table")
-        val set: Set<ZSetOperations.TypedTuple<Trade>> =
+        val set: Set<ZSetOperations.TypedTuple<Trade>> = // remove offsetEpochDayStart from time; shift + nano for score
             trades.map { DefaultTypedTuple<Trade>(it, ((it.timestamp - offset) * 1_000_000_000 + it.nano).toDouble()) }.toSet()
         template.opsForZSet().add(table, set)
         return true
     }
 
-    private data class TradeDayContaining(val epochTimeSeconds: Long) {
+    private data class DayOfEpoch(val epochTimeSeconds: Long) {
+        // trade day start is set to 9:30. UTC is used to reduce object create time. (is GMT-4)
         private val tradeDayStart = LocalDateTime.ofEpochSecond(epochTimeSeconds, 0, ZoneOffset.UTC)
-            .withHour(12)
+            .withHour(13)
             .withMinute(30)
             .withSecond(0)
 
-        // TODO: does not take into account the underlying and whether or not it uses standard market hours.
-        val adjustedTimestamp: Long = tradeDayStart.toEpochSecond(ZoneOffset.UTC)
+        // FIXME: (intended) does not take into account the underlying and whether or not it uses standard market hours.
+        val marketStartTimestamp: Long = tradeDayStart.toEpochSecond(ZoneOffset.UTC)
+        val marketEndTimestamp: Long = marketStartTimestamp + (7 * 60 * 60) + (30 * 60) // add 7.5hrs for trade day end
 
-        // FIXME
-        val startLocalDate = tradeDayStart.withHour(4).withMinute(0).withSecond(0)
+        val startLocalDate = tradeDayStart.withHour(4).withMinute(0).withSecond(0)  // GMT-4 (NYSE)
         val endLocalDate = startLocalDate.plusDays(1)   // until next day start
 
-        val offset = startLocalDate.toEpochSecond(ZoneOffset.UTC)
+        val offsetDayEpochSeconds = startLocalDate.toEpochSecond(ZoneOffset.UTC)
     }
 
     private inline fun LocalDateTime.toZonedDate() = ZonedDateTime.of(this, ZoneOffset.UTC)
 
     override fun getTrades(symbol: String, epochTimeSeconds: Long): TradeSet {
         val table = "$TABLE_NAME:$symbol"
-        val tradeDay = TradeDayContaining(epochTimeSeconds)
+        val day = DayOfEpoch(epochTimeSeconds)
 
         // load cached trades if we have them
-        val tradeSet = getCachedTrades(symbol, table, tradeDay.offset, tradeDay.adjustedTimestamp)
+        val tradeSet = getCachedTrades(symbol, table, day.offsetDayEpochSeconds, day.marketStartTimestamp, day.marketEndTimestamp)
 
         // return if we had data.
         if (tradeSet.trades.isNotEmpty()) {
@@ -124,8 +125,8 @@ class DefaultAlpacaService(
         val client = AlpacaClient.getInstance()
 
         val response = client.getTrades(symbol,
-            tradeDay.startLocalDate.toZonedDate(),
-            tradeDay.endLocalDate.toZonedDate(),
+            day.startLocalDate.toZonedDate(),
+            day.endLocalDate.toZonedDate(),
             TRADE_FETCH_LIMIT,
             null
         )
@@ -139,7 +140,7 @@ class DefaultAlpacaService(
             response.trades.map { it.toTrade() },
     false,
             next
-        ).also { cacheTradeSet(tradeDay.offset, it) }
+        ).also { cacheTradeSet(day.offsetDayEpochSeconds, it) }
     }
 
     /**
@@ -147,7 +148,7 @@ class DefaultAlpacaService(
      */
     override fun forceCacheTradesOfDay(symbol: String, epochTimeSeconds: Long, nextPageToken: String?): TradeSet {
         val client = AlpacaClient.getInstance()
-        val tradeDay = TradeDayContaining(epochTimeSeconds)
+        val tradeDay = DayOfEpoch(epochTimeSeconds)
 
 //        val s = tradeDay.startLocalDate.toZonedDate().format(localNYSE)
 //        val e = tradeDay.endLocalDate.toZonedDate().format(localNYSE)
@@ -168,7 +169,7 @@ class DefaultAlpacaService(
             false,
             next
         ).also {
-            cacheTradeSet(tradeDay.offset, it)
+            cacheTradeSet(tradeDay.offsetDayEpochSeconds, it)
 
             GlobalScope.launch {
                 println(" - CACHED UNTIL ${it.trades.last().timestamp} [count=${it.trades.size}]")
