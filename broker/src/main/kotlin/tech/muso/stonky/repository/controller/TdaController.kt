@@ -16,8 +16,7 @@ class TdaController(
     @ResponseStatus(HttpStatus.OK)
     private fun getPriceHistory(
         @PathVariable symbol: String,
-        @RequestParam(required = false)
-        dayWithUnixTimestamp: Long? = null
+        @RequestParam(required = true) dayWithUnixTimestamp: Long
     ): Bars = tdaService.getCandles(symbol, dayWithUnixTimestamp)
 
 }

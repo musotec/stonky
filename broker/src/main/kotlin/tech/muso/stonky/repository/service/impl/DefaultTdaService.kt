@@ -75,10 +75,12 @@ class DefaultTdaService(
 
     override fun getCachedCandles(symbol: String, table: String, offset: Long, startTimeEpochSeconds: Long): Bars {
         val day = LocalDateTime.ofEpochSecond(offset, 0, ZoneOffset.UTC).format(DateTimeFormatter.BASIC_ISO_DATE)
+        val tableName = "$table:$day"
+        println("LOOKING IN TABLE $tableName")
 
         // TODO: determine how many different days to span (currently just one) and return the joined sets across the tables.
         //  NOTE: offset will need to change with the day + 24*60*60
-        val l: Set<Candle> = template.opsForZSet().rangeByScore("$table:$day", (startTimeEpochSeconds - offset).toDouble(), Double.MAX_VALUE) as Set<Candle>
+        val l: Set<Candle> = template.opsForZSet().rangeByScore(tableName, (startTimeEpochSeconds - offset).toDouble(), Double.MAX_VALUE) as Set<Candle>
 
         // Alternative, which returns all the data for the day.
 //        val l = template.opsForZSet().range("$table:$dayName", 0, -1) as Set<Candle>
@@ -93,28 +95,15 @@ class DefaultTdaService(
         return true
     }
 
-    override fun getCandles(symbol: String, unixTimestampSeconds: Long?): Bars {
-        var adjustedTimestamp: Long? = null
+    override fun getCandles(symbol: String, epochTimeSeconds: Long): Bars {
         val table = "$TABLE_NAME:$symbol"
-
+        val day = DayOfEpoch(epochTimeSeconds)
         // if symbol is already in the repository return the cached version.
-        if (unixTimestampSeconds != null) {
-//            println("GOT TIMESTAMP $startTimeEpochSeconds")
-            val dateTime = LocalDateTime.ofEpochSecond(unixTimestampSeconds, 0, ZoneOffset.UTC)
-                .withHour(12)
-                .withMinute(30)
-                .withSecond(0)
-            adjustedTimestamp = dateTime.toEpochSecond(ZoneOffset.UTC)
 
-            val startLocalDate = dateTime.withHour(4).withMinute(0).withSecond(0)
-            val offset = startLocalDate.toEpochSecond(ZoneOffset.UTC)
-
-            println("LOOKING IN TABLE $table")
-
-            val bars = getCachedCandles(symbol, table, offset, adjustedTimestamp)
-
-            println("RESULT: $bars")
-            if (bars.candles.isNotEmpty()) return bars
+        val bars = getCachedCandles(symbol, table, day.offsetDayEpochSeconds, day.marketStartTimestamp)
+        if (bars.candles.isNotEmpty()) {
+            println("CACHE HIT: $table")
+            return bars
         }
 
         // otherwise do a query, cache it, and then return.
@@ -122,46 +111,42 @@ class DefaultTdaService(
 
         val request = PriceHistReq.Builder.priceHistReq()
             .withSymbol(symbol)
-            .withStartDate(adjustedTimestamp)
+            .withStartDate(day.offsetDayEpochSeconds)
             .withPeriod(1)  // 1 day of candles (note: could be 10/call)
             .withFrequencyType(FrequencyType.minute)
             .withFrequency(1)
             .build()
         val priceHistory = tdaClient.priceHistory(request)
 
-        // TODO: Refactor this code to an object/method call when we have structure
-        val startLocalDate = LocalDateTime.ofEpochSecond(priceHistory.candles.first().datetime / 1000, 0, ZoneOffset.UTC)
-            .withHour(4).withMinute(0).withSecond(0)
-        val startOffset = startLocalDate.toEpochSecond(ZoneOffset.UTC)
-
-
         // TODO: Should cache first and then return from the cache?
-        return Bars(symbol, priceHistory.candles.map { it.toCandle() }).also {
+        return Bars(symbol, priceHistory.candles.map { it.toCandle() }).also { cacheBars(day.offsetDayEpochSeconds, it) }
+    }
 
-            val days = mutableSetOf<List<Candle>>()
-            var curr = mutableListOf<Candle>()
-            var d = 1
-            it.candles.forEach { c ->
-                // jump to a new day if enough time has passed
-                if (c.timeSeconds > (startOffset + d * 24*60*60)) {
-                    days.add(curr)
-                    curr = mutableListOf()
-                    d++
-                }
-
-                // add the candle
-                curr.add(c)
-            } // add the last day
-            days.add(curr)
-
-            // cache each day to its own sorted set
-            days.forEach {
-                val date = LocalDateTime.ofEpochSecond(it.first().timeSeconds.toLong(), 0, ZoneOffset.UTC)
-                    .withHour(4).withMinute(0).withSecond(0)
-                val basicDate = date.format(DateTimeFormatter.BASIC_ISO_DATE)
-                val offset = date.toEpochSecond(ZoneOffset.UTC)
-                cacheCandles("$table:$basicDate", it, offset)
+    private fun cacheBars(offset: Long, bars: Bars) {
+        val table = "${TABLE_NAME}:${bars.symbol}"
+        val days = mutableSetOf<List<Candle>>()
+        var curr = mutableListOf<Candle>()
+        var d = 1
+        bars.candles.forEach { c ->
+            // jump to a new day if enough time has passed
+            if (c.timeSeconds > (offset + d * 24*60*60)) {
+                days.add(curr)
+                curr = mutableListOf()
+                d++
             }
+
+            // add the candle
+            curr.add(c)
+        } // add the last day
+        days.add(curr)
+
+        // cache each day to its own sorted set
+        days.forEach {
+            val date = LocalDateTime.ofEpochSecond(it.first().timeSeconds.toLong(), 0, ZoneOffset.UTC)
+                .withHour(4).withMinute(0).withSecond(0)
+            val basicDate = date.format(DateTimeFormatter.BASIC_ISO_DATE)
+            val offset = date.toEpochSecond(ZoneOffset.UTC)
+            cacheCandles("$table:$basicDate", it, offset)
         }
     }
 }
