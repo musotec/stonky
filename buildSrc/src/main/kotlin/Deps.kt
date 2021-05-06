@@ -5,7 +5,10 @@ object deps {
     const val jsr305 = "com.google.code.findbugs:jsr305:3.0.2"
 
     object android {
-        const val gradlePlugin = "com.android.tools.build:gradle:4.0.2" //2.0-rc01"  // old version needed for IntelliJ 4.1 support
+        // NOTE: old version needed!! 4.2 broken, 7.0 untested/unstable.
+        //   Needed for IntelliJ 4.1 multiplatform support in root projet.
+        //   Android module uses 4.2.0-rc01 within its subproject.
+        const val gradlePlugin = "com.android.tools.build:gradle:4.0.2" //2.0-rc01"
     }
 
     object kotlin {

@@ -22,15 +22,7 @@ data class Bars(val symbol: String, val candles: List<Candle> = mutableListOf())
     constructor(symbol: String, candle: Candle) : this(symbol, listOf(candle))
 
     companion object {
-//        fun Bars.toJson(): String =
-//            JsonObject(
-//                mapOf(
-//                    symbol to Json.encodeToJsonElement(candles),
-//                )
-//            ).toString()
-
         fun Bars.toJson(): String = Json.encodeToString(serializer(), this)
-
         fun fromJson(string: String): Bars = Json.decodeFromString(serializer(), string)
 
         const val path = "/pricehistory"

@@ -6,7 +6,7 @@ import org.springframework.data.redis.core.index.Indexed
 import java.time.LocalDate
 
 @RedisHash("trades")
-data class Trade(
+data class TestTrade(
     @Indexed val strFoo: String,
     val strBar: String,
     val date: LocalDate

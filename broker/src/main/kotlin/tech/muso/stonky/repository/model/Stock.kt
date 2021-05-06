@@ -13,5 +13,5 @@ data class Stock(
 ) {
     @get:Id
     var id: String? = null
-    @Indexed @get:Reference var trades: List<Trade>? = listOf()
+    @Indexed @get:Reference var trades: List<TestTrade>? = listOf()
 }

@@ -17,8 +17,9 @@ dependencies {
     implementation(project(":config"))
     implementation(project(":common"))
 
-    // TD Ameritrade API for server data sourcing.
+    // Brokerage APIs for data sourcing.
     implementation("com.studerw.tda:td-ameritrade-client:2.4.0")
+    implementation("net.jacobpeterson:alpaca-java:7.1.1")
 
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-validation")

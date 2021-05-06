@@ -17,6 +17,8 @@ class SwaggerConfig : WebFluxConfigurer {
             .enable(true)
             .select()
             .apis(RequestHandlerSelectors.any())
-            .paths(regex("/v1/.*"))
+            .paths(regex("/v./.*"))
+//            .paths(regex("/v1/.*"))
+//            .paths(regex("/v2/.*"))
             .build()
 }

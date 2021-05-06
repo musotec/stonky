@@ -3,8 +3,7 @@ package tech.muso.stonky.repository.controller
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer
-import tech.muso.stonky.repository.model.Trade
-import tech.muso.stonky.repository.model.Stock
+import tech.muso.stonky.repository.model.TestTrade
 import tech.muso.stonky.repository.service.TradeService
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
@@ -20,19 +19,19 @@ class TradeController(val tradeService: TradeService) {
 
     @PostMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
-    private fun createTrade(@Validated trade: TradeDto): Trade = tradeService.createTrade(trade)
+    private fun createTrade(@Validated trade: TradeDto): TestTrade = tradeService.createTrade(trade)
 
     @GetMapping(value = ["/{id}"])
     @ResponseStatus(HttpStatus.OK)
-    private fun getTradeById(@PathVariable id: String): Trade = tradeService.getTrade(id)
+    private fun getTradeById(@PathVariable id: String): TestTrade = tradeService.getTrade(id)
 
     @PutMapping(value = ["/{id}"])
     @ResponseStatus(HttpStatus.OK)
-    private fun updateTrade(@PathVariable id: String, @Validated trade: TradeDto): Trade = tradeService.updateTrade(id, trade)
+    private fun updateTrade(@PathVariable id: String, @Validated trade: TradeDto): TestTrade = tradeService.updateTrade(id, trade)
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    private fun getTrades(): List<Trade> = tradeService.getAllTrades()
+    private fun getTrades(): List<TestTrade> = tradeService.getAllTrades()
 
     @DeleteMapping(value = ["/{id}"])
     @ResponseStatus(HttpStatus.NO_CONTENT)

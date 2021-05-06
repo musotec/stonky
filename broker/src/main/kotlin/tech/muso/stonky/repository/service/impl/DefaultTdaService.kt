@@ -22,6 +22,10 @@ class DefaultTdaService(
     val template: RedisTemplate<String, Candle>
 ) : TdaService {
 
+    companion object {
+        const val TABLE_NAME = "candles"
+    }
+
     class TdaClient private constructor() {
 
         // java style singleton object for this class
@@ -70,11 +74,11 @@ class DefaultTdaService(
 
 
     override fun getCachedCandles(symbol: String, table: String, offset: Long, startTimeEpochSeconds: Long): Bars {
-        val dayName = LocalDateTime.ofEpochSecond(offset, 0, ZoneOffset.UTC).format(DateTimeFormatter.BASIC_ISO_DATE)
+        val day = LocalDateTime.ofEpochSecond(offset, 0, ZoneOffset.UTC).format(DateTimeFormatter.BASIC_ISO_DATE)
 
         // TODO: determine how many different days to span (currently just one) and return the joined sets across the tables.
         //  NOTE: offset will need to change with the day + 24*60*60
-        val l: Set<Candle> = template.opsForZSet().rangeByScore("$table:$dayName", (startTimeEpochSeconds - offset).toDouble(), Double.MAX_VALUE) as Set<Candle>
+        val l: Set<Candle> = template.opsForZSet().rangeByScore("$table:$day", (startTimeEpochSeconds - offset).toDouble(), Double.MAX_VALUE) as Set<Candle>
 
         // Alternative, which returns all the data for the day.
 //        val l = template.opsForZSet().range("$table:$dayName", 0, -1) as Set<Candle>
@@ -91,6 +95,7 @@ class DefaultTdaService(
 
     override fun getCandles(symbol: String, unixTimestampSeconds: Long?): Bars {
         var adjustedTimestamp: Long? = null
+        val table = "$TABLE_NAME:$symbol"
 
         // if symbol is already in the repository return the cached version.
         if (unixTimestampSeconds != null) {
@@ -103,11 +108,10 @@ class DefaultTdaService(
 
             val startLocalDate = dateTime.withHour(4).withMinute(0).withSecond(0)
             val offset = startLocalDate.toEpochSecond(ZoneOffset.UTC)
-            val tableName = "candles:$symbol"
 
-            println("LOOKING IN TABLE $tableName")
+            println("LOOKING IN TABLE $table")
 
-            val bars = getCachedCandles(symbol, tableName, offset, adjustedTimestamp)
+            val bars = getCachedCandles(symbol, table, offset, adjustedTimestamp)
 
             println("RESULT: $bars")
             if (bars.candles.isNotEmpty()) return bars
@@ -129,7 +133,6 @@ class DefaultTdaService(
         val startLocalDate = LocalDateTime.ofEpochSecond(priceHistory.candles.first().datetime / 1000, 0, ZoneOffset.UTC)
             .withHour(4).withMinute(0).withSecond(0)
         val startOffset = startLocalDate.toEpochSecond(ZoneOffset.UTC)
-        val tableName = "candles:$symbol"
 
 
         // TODO: Should cache first and then return from the cache?
@@ -148,7 +151,8 @@ class DefaultTdaService(
 
                 // add the candle
                 curr.add(c)
-            }
+            } // add the last day
+            days.add(curr)
 
             // cache each day to its own sorted set
             days.forEach {
@@ -156,7 +160,7 @@ class DefaultTdaService(
                     .withHour(4).withMinute(0).withSecond(0)
                 val basicDate = date.format(DateTimeFormatter.BASIC_ISO_DATE)
                 val offset = date.toEpochSecond(ZoneOffset.UTC)
-                cacheCandles("$tableName:$basicDate", it, offset)
+                cacheCandles("$table:$basicDate", it, offset)
             }
         }
     }

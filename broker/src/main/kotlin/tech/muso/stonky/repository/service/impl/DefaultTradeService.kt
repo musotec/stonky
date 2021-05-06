@@ -1,7 +1,7 @@
 package tech.muso.stonky.repository.service.impl
 
 import tech.muso.stonky.repository.controller.TradeController
-import tech.muso.stonky.repository.model.Trade
+import tech.muso.stonky.repository.model.TestTrade
 import tech.muso.stonky.repository.model.Stock
 import tech.muso.stonky.repository.repository.TradeRepository
 import tech.muso.stonky.repository.service.TradeService
@@ -22,25 +22,25 @@ class DefaultTradeService(
         StockNotFoundException("Unable to find Stock for $id id")
     }
 
-    override fun getAllTrades(): List<Trade> = tradeRepository.findAll().toList()
+    override fun getAllTrades(): List<TestTrade> = tradeRepository.findAll().toList()
 
-    override fun updateTrade(id: String, tradeDto: TradeController.TradeDto): Trade {
+    override fun updateTrade(id: String, tradeDto: TradeController.TradeDto): TestTrade {
         val Trade = getTrade(id).copy(tradeDto.foo, tradeDto.bar, tradeDto.date)
         Trade.id = id
         return tradeRepository.save(Trade)
     }
 
-    override fun createTrade(tradeDto: TradeController.TradeDto): Trade {
+    override fun createTrade(tradeDto: TradeController.TradeDto): TestTrade {
         // TODO: when trade is created, have the trade published.
 //        tradeAddedProducer.publish(tradeDto.stock)
-        return tradeRepository.save(Trade(tradeDto.foo, tradeDto.bar, tradeDto.date))
+        return tradeRepository.save(TestTrade(tradeDto.foo, tradeDto.bar, tradeDto.date))
     }
 
     override fun deleteTrade(id: String) = tradeRepository.deleteById(id)
 
     override fun addTradeToStock(TradeId: String, StockId: String): Stock {
         val stock: Stock = stockService.getStock(StockId)
-        val trade: Trade = getTrade(TradeId)
+        val trade: TestTrade = getTrade(TradeId)
         (stock.trades as ArrayList).add(trade)
         return stockService.updateStock(stock)
     }

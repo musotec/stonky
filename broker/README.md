@@ -2,12 +2,9 @@
 This module is the repository microservice for stonky. The goal of the module is to provide routing for stonky's own API.
 This allows for smart management of API calls, returning locally cached results if available by using a Redis database.
 
-## TODO
-Currently, this module is at the project integration level. All Redis components are in their default state.
-
 Roadmap:
-- Implement a smarter Redis configuration for saving time-series data.
-- Migrate remote API interfacing from `stonky.server` into `stonky.repository`
+- ~~Implement a smarter Redis configuration for saving time-series data.~~
+- ~~Migrate remote API interfacing from `stonky.server` into `stonky.repository`~~
 - Integrate the `config` module for easier configuration outside of this module.
 
 ## Rationale
@@ -18,6 +15,7 @@ Roadmap:
 ## Future Scaling
 - When using Redis clusters instead of a single node, work needs to be done to route various tables (can separate by symbol, data type)
     - Ideally, only call SCAN on the node that can use the data instead of naive implementation of SCAN on all nodes in cluster.
+- Time-series storage can be optimized by following [best practices](https://redislabs.com/redis-best-practices/time-series/).
 
 ### Debugging
 
