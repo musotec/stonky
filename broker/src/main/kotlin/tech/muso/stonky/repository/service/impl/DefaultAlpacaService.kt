@@ -2,6 +2,9 @@ package tech.muso.stonky.repository.service.impl
 
 import Trade
 import TradeSet
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import net.jacobpeterson.alpaca.AlpacaAPI
 import org.springframework.data.redis.core.DefaultTypedTuple
 import org.springframework.data.redis.core.RedisTemplate
@@ -23,6 +26,9 @@ class DefaultAlpacaService(
 
         @JvmStatic val rfc3339 =
             DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(ZoneId.of("UTC"))
+
+        @JvmStatic val localNYSE =
+            DateTimeFormatter.ofPattern("HH:mm:ss.SSS").withZone(ZoneId.of("America/New_York"))
 
         fun parseEpoch(time: String) = Instant.parse(time).toEpochMilli()
         fun parseToEpochSecond(time: String) = Instant.parse(time).truncatedTo(ChronoUnit.SECONDS).toEpochMilli()
@@ -66,10 +72,10 @@ class DefaultAlpacaService(
         println("LOOKING IN TABLE $tableName")
         // TODO: determine how many different days to span (currently just one) and return the joined sets across the tables.
         //  NOTE: offset will need to change with the day + 24*60*60
-//        val l: Set<Trade> = template.opsForZSet().rangeByScore(tableName, (startTimeEpochSeconds - offset).toDouble(), Double.MAX_VALUE) as Set<Trade>
+        val l: Set<Trade> = template.opsForZSet().rangeByScore(tableName, (startTimeEpochSeconds - offset).toDouble(), Double.MAX_VALUE) as Set<Trade>
 
         // Alternative, which returns all the data for the day.
-        val l = template.opsForZSet().range(tableName, 0, -1) as Set<Trade>
+//        val l = template.opsForZSet().range(tableName, 0, -1) as Set<Trade>
         return TradeSet(symbol, l.toList(), cached=true)
     }
 
@@ -92,7 +98,7 @@ class DefaultAlpacaService(
 
         // FIXME
         val startLocalDate = tradeDayStart.withHour(4).withMinute(0).withSecond(0)
-        val endLocalDate = tradeDayStart.withHour(23).withMinute(0).withSecond(0)
+        val endLocalDate = startLocalDate.plusDays(1)   // until next day start
 
         val offset = startLocalDate.toEpochSecond(ZoneOffset.UTC)
     }
@@ -128,24 +134,54 @@ class DefaultAlpacaService(
         println("had next token: $next")
 
         // TODO: Should cache first and then return from the cache?
-        return TradeSet(symbol, response.trades.map { it.toTrade() }).also { cacheTradeSet(tradeDay.offset, it) }
+        return TradeSet(
+            symbol,
+            response.trades.map { it.toTrade() },
+    false,
+            next
+        ).also { cacheTradeSet(tradeDay.offset, it) }
     }
 
     /**
      * Perform an immediate call on the Alpaca API using the next page token to retrieve more results.
      */
-//    override fun getMoreTrades(symbol: String, epochTimeSeconds: Long, nextPageToken: String): TradeSet {
-//
-//        val client = AlpacaClient.getInstance()
-//
-//        val response = client.getTrades(symbol,
-//            ZonedDateTime.of(startLocalDate, ZoneOffset.UTC),
-//            ZonedDateTime.of(endLocalDate, ZoneOffset.UTC),
-//            TRADE_FETCH_LIMIT,
-//            nextPageToken
-//        )
-//
-//    }
+    override fun forceCacheTradesOfDay(symbol: String, epochTimeSeconds: Long, nextPageToken: String?): TradeSet {
+        val client = AlpacaClient.getInstance()
+        val tradeDay = TradeDayContaining(epochTimeSeconds)
+
+//        val s = tradeDay.startLocalDate.toZonedDate().format(localNYSE)
+//        val e = tradeDay.endLocalDate.toZonedDate().format(localNYSE)
+//        println("GETTING [$s, $e]")
+
+        val response = client.getTrades(symbol,
+            tradeDay.startLocalDate.toZonedDate(),
+            tradeDay.endLocalDate.toZonedDate(),
+            TRADE_FETCH_LIMIT,
+            nextPageToken
+        )
+
+        val next = response.nextPageToken
+
+        return TradeSet(
+            symbol,
+            response.trades.map { it.toTrade() },
+            false,
+            next
+        ).also {
+            cacheTradeSet(tradeDay.offset, it)
+
+            GlobalScope.launch {
+                println(" - CACHED UNTIL ${it.trades.last().timestamp} [count=${it.trades.size}]")
+                delay(200)  // delay for Alpaca API throttle    // TODO: test if delay from data receive or request send.
+                if (next != null) {
+                    println(" -> next: $next")
+                    forceCacheTradesOfDay(symbol, epochTimeSeconds, next)
+                } else {
+                    println(" <- end of stream ${it.trades.last().timestamp}")
+                }
+            }
+        }
+    }
 
     private fun cacheTradeSet(offset: Long, tradeSet: TradeSet) {
         val table = "$TABLE_NAME:${tradeSet.symbol}"

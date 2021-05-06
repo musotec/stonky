@@ -28,6 +28,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
+    implementation(deps.kotlin.coroutinesCore)
+
     // Lettuce > Jedis for async applications.
     implementation("io.lettuce:lettuce-core:6.1.1.RELEASE")
 

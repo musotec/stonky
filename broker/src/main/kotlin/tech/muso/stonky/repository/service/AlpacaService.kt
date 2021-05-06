@@ -10,5 +10,5 @@ interface AlpacaService {
     fun cacheTrades(table: String, trades: List<Trade>, offset: Long): Boolean?
     fun getCachedTrades(symbol: String, table: String, offset: Long, startTimeEpochSeconds: Long): TradeSet
     fun getTrades(symbol: String, startTimeEpochSeconds: Long): TradeSet
-//    fun getMoreTrades(symbol: String, startTimeEpochSeconds: Long, nextPageToken: String): TradeSet
+    fun forceCacheTradesOfDay(symbol: String, startTimeEpochSeconds: Long, nextPageToken: String? = null): TradeSet
 }
