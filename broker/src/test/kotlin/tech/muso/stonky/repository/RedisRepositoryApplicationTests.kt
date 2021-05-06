@@ -51,6 +51,7 @@ class RedisRepositoryApplicationTests {
 		val endLocalDate = dateTime.withHour(23).withMinute(0).withSecond(0)
 
 		val client = AlpacaAPI(
+			// i know i committed these keys, it's a paper trading account + invalid anyways, pls do not make an issue.
 			"2a168730416f6541bbd1ad469527f83b",
 			"2f3c00fa56d4498fbbe10eed55cbb0d2dbf09982",
 			"4ad11013-d1f9-4e3d-b88e-394444be0144",
