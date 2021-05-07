@@ -20,4 +20,11 @@ class AlpacaController(
         @RequestParam(required = false) forceApiCall: Boolean = false
     ): TradeSet = if (forceApiCall) alpacaService.forceCacheTradesOfDay(symbol, dayWithUnixTimestamp) else alpacaService.getTrades(symbol, dayWithUnixTimestamp)
 
+    @GetMapping(value = ["/{symbol}/trades/batch"])
+    @ResponseStatus(HttpStatus.OK)
+    private fun getBatchTradeHistory(
+        @PathVariable symbol: String,
+        @RequestParam(required = true) dayWithUnixTimestamp: Long
+    ): Unit = alpacaService.getBulkTradesFromDate(symbol, dayWithUnixTimestamp)
+
 }

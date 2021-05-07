@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android/core/github.stonky.android.core.main.iml" filepath="$PROJECT_DIR$/.idea/modules/android/core/github.stonky.android.core.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android/core/github.stonky.android.core.test.iml" filepath="$PROJECT_DIR$/.idea/modules/android/core/github.stonky.android.core.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/android/stonky.android.iml" filepath="$PROJECT_DIR$/.idea/modules/android/stonky.android.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/android/app/stonky.android.app.iml" filepath="$PROJECT_DIR$/.idea/modules/android/app/stonky.android.app.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/android/core/stonky.android.core.iml" filepath="$PROJECT_DIR$/.idea/modules/android/core/stonky.android.core.iml" />

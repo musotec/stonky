@@ -5,6 +5,8 @@ import TradeSet
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import net.jacobpeterson.alpaca.AlpacaAPI
 import org.springframework.data.redis.core.DefaultTypedTuple
 import org.springframework.data.redis.core.RedisTemplate
@@ -66,9 +68,8 @@ class DefaultAlpacaService(
     }
 
     override fun getCachedTrades(symbol: String, table: String, offset: Long, startTimeEpochSeconds: Long, endTimeEpochSeconds: Long): TradeSet {
-        val dayName = LocalDateTime.ofEpochSecond(offset, 0, ZoneOffset.UTC).format(DateTimeFormatter.BASIC_ISO_DATE)
-
-        val tableName = "$table:$dayName"
+        val day = offset.toBasicIsoDate()
+        val tableName = "$table:$day"
         println("LOOKING IN TABLE $tableName")
         // TODO: determine how many different days to span (currently just one) and return the joined sets across the tables.
         //  NOTE: offset will need to change with the day + 24*60*60
@@ -124,6 +125,70 @@ class DefaultAlpacaService(
         ).also { cacheTradeSet(day.offsetDayEpochSeconds, it) }
     }
 
+    override fun getBulkTradesFromDate(symbol: String, epochTimeSeconds: Long) {
+        val present = System.currentTimeMillis() / 1000 // convert to epoch seconds
+        var tradeDay = DayOfEpoch(epochTimeSeconds)
+        // prevent what would be an erroneous call to Alpaca API
+        if (tradeDay.marketEndTimestamp >= present) {
+            println("<< REACHED CURRENT DAY ")
+            return
+        }
+
+        GlobalScope.launch {
+            mutex.withLock {
+                cacheTradesOfDay(symbol, epochTimeSeconds) {
+                    tradeDay = DayOfEpoch(tradeDay.marketStartTimestamp + 24 * 60 * 60)
+                    println("=============================================================================")
+                    println(">> ${tradeDay.epochTimeSeconds.toBasicIsoDate()} ")
+                    println("=============================================================================")
+                    getBulkTradesFromDate(symbol, tradeDay.epochTimeSeconds)
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Perform an immediate call on the Alpaca API using the next page token to retrieve more results.
+     */
+    private suspend fun cacheTradesOfDay(symbol: String, epochTimeSeconds: Long, nextPageToken: String? = null, doOnEnd: () -> Unit) {
+        val client = AlpacaClient.getInstance()
+        val tradeDay = DayOfEpoch(epochTimeSeconds)
+
+//        val s = tradeDay.startLocalDate.toZonedDate().format(localNYSE)
+//        val e = tradeDay.endLocalDate.toZonedDate().format(localNYSE)
+//        println("GETTING [$s, $e]")
+
+        val response = client.getTrades(
+            symbol,
+            tradeDay.startLocalDate.toZonedDate(),
+            tradeDay.endLocalDate.toZonedDate(),
+            TRADE_FETCH_LIMIT,
+            nextPageToken
+        )
+
+        val next = response.nextPageToken
+
+        TradeSet(
+            symbol,
+            response.trades.map { it.toTrade() },
+            false,
+            next
+        ).also {
+            cacheTradeSet(tradeDay.offsetDayEpochSeconds, it)
+            if (it.trades.isNotEmpty()) println(" - CACHED UNTIL ${it.trades.last().timestamp} [count=${it.trades.size}]")
+            delay(100)  // delay for Alpaca API throttle    // TODO: test if delay from data receive or request send. (cacheTradeSet may take a while)
+            if (next != null) {
+                println(" -> next: $next")
+                cacheTradesOfDay(symbol, epochTimeSeconds, next, doOnEnd)
+            } else {
+                if (it.trades.isNotEmpty()) println(" <- end of stream ${it.trades.last().timestamp}")
+                doOnEnd()
+            }
+        }
+    }
+
+
     /**
      * Perform an immediate call on the Alpaca API using the next page token to retrieve more results.
      */
@@ -151,19 +216,22 @@ class DefaultAlpacaService(
             next
         ).also {
             cacheTradeSet(tradeDay.offsetDayEpochSeconds, it)
-
+            if (it.trades.isNotEmpty()) println(" - CACHED UNTIL ${it.trades.last().timestamp} [count=${it.trades.size}]")
             GlobalScope.launch {
-                println(" - CACHED UNTIL ${it.trades.last().timestamp} [count=${it.trades.size}]")
-                delay(200)  // delay for Alpaca API throttle    // TODO: test if delay from data receive or request send.
-                if (next != null) {
-                    println(" -> next: $next")
-                    forceCacheTradesOfDay(symbol, epochTimeSeconds, next)
-                } else {
-                    println(" <- end of stream ${it.trades.last().timestamp}")
+                mutex.withLock {
+                    delay(200)  // delay for Alpaca API throttle    // TODO: test if delay from data receive or request send.
+                    if (next != null) {
+                        println(" -> next: $next")
+                        forceCacheTradesOfDay(symbol, epochTimeSeconds, next)
+                    } else {
+                        if (it.trades.isNotEmpty()) println(" <- end of stream ${it.trades.last().timestamp}")
+                    }
                 }
             }
         }
     }
+
+    private val mutex = Mutex()
 
     private fun cacheTradeSet(offset: Long, tradeSet: TradeSet) {
         val table = "$TABLE_NAME:${tradeSet.symbol}"
@@ -186,11 +254,14 @@ class DefaultAlpacaService(
 
         // cache each day to its own sorted set
         days.forEach {
-            val date = LocalDateTime.ofEpochSecond(it.first().timestamp.toLong(), 0, ZoneOffset.UTC)
-                .withHour(4).withMinute(0).withSecond(0)
-            val basicDate = date.format(DateTimeFormatter.BASIC_ISO_DATE)
-            val offset = date.toEpochSecond(ZoneOffset.UTC)
-            cacheTrades("$table:$basicDate", it, offset)
+            if (it.isNotEmpty()) {
+                // TODO: speed up the timestamp -> basicDate conversion
+                val date = LocalDateTime.ofEpochSecond(it.first().timestamp.toLong(), 0, ZoneOffset.UTC)
+                    .withHour(4).withMinute(0).withSecond(0)
+                val basicDate = date.format(DateTimeFormatter.BASIC_ISO_DATE)
+                val offset = date.toEpochSecond(ZoneOffset.UTC)
+                cacheTrades("$table:$basicDate", it, offset)
+            }
         }
     }
 }

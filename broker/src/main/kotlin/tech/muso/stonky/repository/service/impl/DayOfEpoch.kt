@@ -3,6 +3,7 @@ package tech.muso.stonky.repository.service.impl
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 internal data class DayOfEpoch(val epochTimeSeconds: Long) {
     // trade day start is set to 9:30. UTC is used to reduce object create time. (is GMT-4)
@@ -22,3 +23,5 @@ internal data class DayOfEpoch(val epochTimeSeconds: Long) {
 }
 
 internal inline fun LocalDateTime.toZonedDate() = ZonedDateTime.of(this, ZoneOffset.UTC)
+internal inline fun Long.toBasicIsoDate() = LocalDateTime.ofEpochSecond(this, 0, ZoneOffset.UTC)
+    .format(DateTimeFormatter.BASIC_ISO_DATE)

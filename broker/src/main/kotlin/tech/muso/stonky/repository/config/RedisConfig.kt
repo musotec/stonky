@@ -5,7 +5,6 @@ import Trade
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.cbor.Cbor
-import kotlinx.serialization.json.Json
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -19,6 +18,7 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories
 import org.springframework.data.redis.serializer.RedisSerializer
 import org.springframework.data.redis.serializer.StringRedisSerializer
+import java.io.*
 
 
 @Configuration
@@ -63,6 +63,13 @@ class RedisConfig(val messageListener: MessageListener) {
             override fun serialize(t: Candle?): ByteArray = Cbor.encodeToByteArray(serializer, t!!)
             override fun deserialize(bytes: ByteArray?): Candle = Cbor.decodeFromByteArray(serializer, bytes!!)
         }
+//        valueSerializer = object : RedisSerializer<Candle> {
+//            // TODO: compare CBOR/Proto/json/etc speed for serialization from kotlinx.serialization
+//            //   https://github.com/Kotlin/kotlinx.serialization/blob/master/docs/formats.md#protobuf-experimental
+//            val serializer: KSerializer<Candle> = Candle.serializer()
+//            override fun serialize(t: Candle?): ByteArray = ProtoBuf.encode
+//            override fun deserialize(bytes: ByteArray?): Candle = Cbor.decodeFromByteArray(serializer, bytes!!)
+//        }
     }
 
     @OptIn(ExperimentalSerializationApi::class)
@@ -70,17 +77,71 @@ class RedisConfig(val messageListener: MessageListener) {
     fun redisTradesTemplate() = RedisTemplate<String, Trade>().apply {
         setConnectionFactory(redisConnectionFactory())   // TODO: change connection factory if Trades/Candles on different Redis nodes
         keySerializer = StringRedisSerializer()
-        valueSerializer = object : RedisSerializer<Trade> {
-            val serializer: KSerializer<Trade> = Trade.serializer()
-            override fun serialize(t: Trade?): ByteArray = Cbor.encodeToByteArray(serializer, t!!)
-            override fun deserialize(bytes: ByteArray?): Trade = Cbor.decodeFromByteArray(serializer, bytes!!)
-        }
+//        valueSerializer = object : RedisSerializer<Trade> {
+//            val serializer: KSerializer<Trade> = Trade.serializer()
+//            override fun serialize(t: Trade?): ByteArray = Cbor.encodeToByteArray(serializer, t!!)
+//            override fun deserialize(bytes: ByteArray?): Trade = Cbor.decodeFromByteArray(serializer, bytes!!)
+//        }
 
 //        valueSerializer = object : RedisSerializer<Trade> {
 //            val serializer: KSerializer<Trade> = Trade.serializer()
 //            override fun serialize(t: Trade?): ByteArray = Json.encodeToString(serializer, t!!).toByteArray(Charsets.UTF_8)
 //            override fun deserialize(bytes: ByteArray?): Trade = Json.decodeFromString(serializer, bytes!!.toString(Charsets.UTF_8))
 //        }
+
+//        @SerialName("x") val exchange: String,
+//        @SerialName("p") val price: Double,
+//        @SerialName("s") val size: Int,
+//        @SerialName("c") val conditions: ArrayList<String>, // TODO: can byte pack to an int.
+//        @SerialName("i") val id: Long,
+//        @SerialName("z") val tape: String
+        valueSerializer = object : RedisSerializer<Trade> {
+            override fun serialize(t: Trade?): ByteArray {
+                // TODO: compare time & write more kotlin version
+                val baos = ByteArrayOutputStream()
+                val oos = ObjectOutputStream(baos)
+                oos.writeLong(t!!.timestamp)
+                oos.writeChar(t.exchange.first().toInt())
+                oos.writeDouble(t.price)
+                oos.writeInt(t.size)
+                oos.writeLong(t.id)
+                oos.writeChar(t.tape.first().toInt())
+                oos.writeChar(t.conditions.getOrNull(0)?.firstOrNull()?.toInt() ?: ' '.toInt())
+                oos.writeChar(t.conditions.getOrNull(1)?.firstOrNull()?.toInt() ?: ' '.toInt())
+                oos.flush()
+                val result = baos.toByteArray()
+                baos.close()
+                oos.close()
+                return result
+            }
+
+            override fun deserialize(bytes: ByteArray?): Trade {
+
+                val byteArrayInputStream = ByteArrayInputStream(bytes!!)
+                val ins: ObjectInput = ObjectInputStream(byteArrayInputStream)
+//                val result = objectInput.readObject() as T
+                val timestamp = ins.readLong()
+                val exchange = ins.readChar().toString()
+                val price = ins.readDouble()
+                val size = ins.readInt()
+                val id = ins.readLong()
+                val tape = ins.readChar().toString()
+                val c0 = ins.readChar()
+                val c1 = ins.readChar()
+                val conditions = arrayListOf(c0.toString(), c1.toString())
+                ins.close()
+                byteArrayInputStream.close()
+                return Trade(
+                    timestamp = timestamp,
+                    exchange = exchange,
+                    price = price,
+                    size = size,
+                    conditions = conditions,
+                    id = id,
+                    tape = tape
+                )
+            }
+        }
     }
 
     @Bean

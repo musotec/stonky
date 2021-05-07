@@ -74,7 +74,7 @@ class DefaultTdaService(
 
 
     override fun getCachedCandles(symbol: String, table: String, offset: Long, startTimeEpochSeconds: Long): Bars {
-        val day = LocalDateTime.ofEpochSecond(offset, 0, ZoneOffset.UTC).format(DateTimeFormatter.BASIC_ISO_DATE)
+        val day = offset.toBasicIsoDate()
         val tableName = "$table:$day"
         println("LOOKING IN TABLE $tableName")
 
@@ -142,6 +142,7 @@ class DefaultTdaService(
 
         // cache each day to its own sorted set
         days.forEach {
+            // TODO: speed up the timestamp -> basicDate conversion
             val date = LocalDateTime.ofEpochSecond(it.first().timeSeconds.toLong(), 0, ZoneOffset.UTC)
                 .withHour(4).withMinute(0).withSecond(0)
             val basicDate = date.format(DateTimeFormatter.BASIC_ISO_DATE)

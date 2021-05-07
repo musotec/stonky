@@ -26,6 +26,7 @@ object deps {
             const val json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.0"
             const val jvm = "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.0.0"
             const val cbor = "org.jetbrains.kotlinx:kotlinx-serialization-cbor:$version"
+            const val protobuf = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.2.0"
         }
 
         object ktor {
