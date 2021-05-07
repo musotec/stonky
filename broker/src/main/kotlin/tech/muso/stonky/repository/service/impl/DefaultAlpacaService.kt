@@ -122,14 +122,16 @@ class DefaultAlpacaService(
             response.trades.map { it.toTrade() },
     false,
             next
-        ).also { cacheTradeSet(day.offsetDayEpochSeconds, it) }
+        ).also {
+            GlobalScope.launch { cacheTradeSet(day.offsetDayEpochSeconds, it) }
+        }
     }
 
     override fun getBulkTradesFromDate(symbol: String, epochTimeSeconds: Long) {
         val present = System.currentTimeMillis() / 1000 // convert to epoch seconds
         var tradeDay = DayOfEpoch(epochTimeSeconds)
         // prevent what would be an erroneous call to Alpaca API
-        if (tradeDay.marketEndTimestamp >= present) {
+        if (tradeDay.endLocalDate.toEpochSecond(ZoneOffset.UTC) >= present) {
             println("<< REACHED CURRENT DAY ")
             return
         }
@@ -215,9 +217,9 @@ class DefaultAlpacaService(
             false,
             next
         ).also {
-            cacheTradeSet(tradeDay.offsetDayEpochSeconds, it)
-            if (it.trades.isNotEmpty()) println(" - CACHED UNTIL ${it.trades.last().timestamp} [count=${it.trades.size}]")
             GlobalScope.launch {
+                cacheTradeSet(tradeDay.offsetDayEpochSeconds, it)
+                if (it.trades.isNotEmpty()) println(" - CACHED UNTIL ${it.trades.last().timestamp} [count=${it.trades.size}]")
                 mutex.withLock {
                     delay(200)  // delay for Alpaca API throttle    // TODO: test if delay from data receive or request send.
                     if (next != null) {
@@ -233,7 +235,7 @@ class DefaultAlpacaService(
 
     private val mutex = Mutex()
 
-    private fun cacheTradeSet(offset: Long, tradeSet: TradeSet) {
+    private suspend fun cacheTradeSet(offset: Long, tradeSet: TradeSet) {
         val table = "$TABLE_NAME:${tradeSet.symbol}"
         val days = mutableSetOf<List<Trade>>()
         var curr = mutableListOf<Trade>()
