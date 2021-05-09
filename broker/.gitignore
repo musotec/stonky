@@ -3,6 +3,7 @@ HELP.md
 .gradle
 build/
 redisdb/*
+*.rdb
 spring-swagger-codegen-api-client/*
 swagger-codegen-cli-3.0.25.jar
 api-docs.json

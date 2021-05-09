@@ -5,6 +5,8 @@ import Candle
 import com.studerw.tda.client.HttpTdaClient
 import com.studerw.tda.model.history.FrequencyType
 import com.studerw.tda.model.history.PriceHistReq
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.springframework.data.redis.core.DefaultTypedTuple
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.core.ZSetOperations
@@ -23,7 +25,7 @@ class DefaultTdaService(
 ) : TdaService {
 
     companion object {
-        const val TABLE_NAME = "candles"
+        const val TABLE_NAME = "c"
     }
 
     class TdaClient private constructor() {
@@ -73,36 +75,46 @@ class DefaultTdaService(
 
 
 
-    override fun getCachedCandles(symbol: String, table: String, offset: Long, startTimeEpochSeconds: Long): Bars {
+    override fun getCachedCandles(symbol: String, offset: Long, startTimeEpochSeconds: Long): Bars {
         val day = offset.toBasicIsoDate()
-        val tableName = "$table:$day"
+        val tableName = "$symbol:$day:$TABLE_NAME"
         println("LOOKING IN TABLE $tableName")
 
         // TODO: determine how many different days to span (currently just one) and return the joined sets across the tables.
         //  NOTE: offset will need to change with the day + 24*60*60
         val l: Set<Candle> = template.opsForZSet().rangeByScore(tableName, (startTimeEpochSeconds - offset).toDouble(), Double.MAX_VALUE) as Set<Candle>
 
+        if (l.isNotEmpty()) {
+            println("CACHE HIT: $tableName")
+        }
+
         // Alternative, which returns all the data for the day.
 //        val l = template.opsForZSet().range("$table:$dayName", 0, -1) as Set<Candle>
         return Bars(symbol, l.toList())
     }
 
-    override fun cacheCandles(table: String, candles: List<Candle>, offset: Long): Boolean? {
-        println("CACHING CANDLES IN TABLE $table")
+    override suspend fun cacheCandles(
+        symbol: String,
+        date: String,
+        table: String,
+        candles: List<Candle>,
+        offset: Long
+    ): Boolean? {
+        val tableName = "$symbol:$date:$table"
+
+        println("CACHING CANDLES IN TABLE $tableName")
         val set: Set<ZSetOperations.TypedTuple<Candle>> =
             candles.map { DefaultTypedTuple<Candle>(it, (it.timeSeconds - offset).toDouble()) }.toSet()
-        template.opsForZSet().add(table, set)
+        template.opsForZSet().add(tableName, set)
         return true
     }
 
     override fun getCandles(symbol: String, epochTimeSeconds: Long): Bars {
-        val table = "$TABLE_NAME:$symbol"
         val day = DayOfEpoch(epochTimeSeconds)
         // if symbol is already in the repository return the cached version.
 
-        val bars = getCachedCandles(symbol, table, day.offsetDayEpochSeconds, day.marketStartTimestamp)
+        val bars = getCachedCandles(symbol, day.offsetDayEpochSeconds, day.marketStartTimestamp)
         if (bars.candles.isNotEmpty()) {
-            println("CACHE HIT: $table")
             return bars
         }
 
@@ -147,7 +159,8 @@ class DefaultTdaService(
                 .withHour(4).withMinute(0).withSecond(0)
             val basicDate = date.format(DateTimeFormatter.BASIC_ISO_DATE)
             val offset = date.toEpochSecond(ZoneOffset.UTC)
-            cacheCandles("$table:$basicDate", it, offset)
+//            cacheCandles("$table:$basicDate", it, offset)
+            GlobalScope.launch { cacheCandles(bars.symbol, basicDate, table, it, offset) }
         }
     }
 }

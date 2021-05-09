@@ -12,6 +12,7 @@ internal data class DayOfEpoch(val epochTimeSeconds: Long) {
         .withMinute(30)
         .withSecond(0)
 
+    // FIXME: use lazy properties and/or simplify
     // FIXME: (intended) does not take into account the underlying and whether or not it uses standard market hours.
     val marketStartTimestamp: Long = tradeDayStart.toEpochSecond(ZoneOffset.UTC)
     val marketEndTimestamp: Long = marketStartTimestamp + (7 * 60 * 60) + (30 * 60) // add 7.5hrs for trade day end

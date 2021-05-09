@@ -8,10 +8,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import net.jacobpeterson.alpaca.AlpacaAPI
+import org.springframework.data.redis.connection.RedisZSetCommands
 import org.springframework.data.redis.core.DefaultTypedTuple
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.data.redis.core.ZSetOperations
 import org.springframework.stereotype.Service
+import tech.muso.stonky.repository.repository.HashRepository
 import tech.muso.stonky.repository.service.AlpacaService
 import java.time.*
 import java.time.format.DateTimeFormatter
@@ -19,12 +22,23 @@ import java.time.temporal.ChronoUnit
 
 @Service
 class DefaultAlpacaService(
-    val template: RedisTemplate<String, Trade>
+    val repository: HashRepository,
+    val template: RedisTemplate<String, Trade>,
+    val timestampTemplate: StringRedisTemplate
 ) : AlpacaService {
 
     companion object {
-        const val TABLE_NAME = "trades"
+        const val TABLE_NAME = "t"
         const val TRADE_FETCH_LIMIT = 10_000
+        const val SHARD_SIZE = 1024 // shards should be sized by: zset-max-ziplist-entries,
+        // while timestamps (list of ints) can be set by set-max-intset-entries (512) in redis.conf.
+
+        // trades can be captured in less than 64 bytes we can ziplist zsets of 1024 trades x 1024 shards efficiently.
+        // when the structure breaks down, it will convert the intset to a hashtable, which is still very efficient.
+        // TODO: this may be worth setting higher as we never mutate the data, so may not be worth space
+        //  as we never would incur the theoretical performance cost (only query once created)
+
+        // long intsets have difficulties during insertion/deletion, but this is not an issue as the data is immutable.
 
         @JvmStatic val rfc3339 =
             DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(ZoneId.of("UTC"))
@@ -67,6 +81,50 @@ class DefaultAlpacaService(
         )
     }
 
+    private inline fun longToUInt32ByteArray(value: Long): ByteArray {
+        val bytes = ByteArray(4)
+        bytes[3] = (value and 0xFFFF).toByte()
+        bytes[2] = ((value ushr 8) and 0xFFFF).toByte()
+        bytes[1] = ((value ushr 16) and 0xFFFF).toByte()
+        bytes[0] = ((value ushr 24) and 0xFFFF).toByte()
+        return bytes
+    }
+
+    private fun pipelineTest(symbol: String, table: String, date: String, trades: List<Trade>, offset: Long): Boolean? {
+        val thisTable = "$symbol:$table:$date"
+        println("CACHING TRADES IN TABLE $thisTable")
+        val shard = repository.findById(thisTable)
+//        val shard = shardRepository.findOne(Example.of(HashedShard("$symbol:$table", date)))
+//        val timestampList = if (shard.isEmpty) mutableListOf() else shard.get().timestamps
+
+        val prevShardCount = template.opsForSet().size(thisTable)?.toInt() ?: 0   // do SCARD of the set (intset) of timestamps
+
+        template.executePipelined {
+            (it).apply {
+                // break apart the number of trades by the shard size
+                trades.chunked(SHARD_SIZE).forEachIndexed { i, shard ->
+                    val n = prevShardCount + i
+                    val tableName = "$thisTable:$n"
+                    println(" | $tableName")
+                    val set: Set<RedisZSetCommands.Tuple> =
+                        shard.map {
+                            DefaultTypedTuple<Trade>(
+                                it,
+                                // remove offsetEpochDayStart from time; shift + nano for score
+                                ((it.timestamp - offset) * 1_000_000_000 + it.nano).toDouble()
+                            ) as RedisZSetCommands.Tuple
+                        }.toSet()
+                    // add the chunk
+                    zAdd(tableName.toByteArray(), set)
+                    // and
+                    sAdd(thisTable.toByteArray(), longToUInt32ByteArray(shard.first().timestamp))
+                }
+            }
+        }
+
+        return true
+    }
+
     override fun getCachedTrades(symbol: String, table: String, offset: Long, startTimeEpochSeconds: Long, endTimeEpochSeconds: Long): TradeSet {
         val day = offset.toBasicIsoDate()
         val tableName = "$table:$day"
@@ -80,11 +138,32 @@ class DefaultAlpacaService(
         return TradeSet(symbol, l.toList(), cached=true)
     }
 
-    override fun cacheTrades(table: String, trades: List<Trade>, offset: Long): Boolean? {
-        println("CACHING TRADES IN TABLE $table")
-        val set: Set<ZSetOperations.TypedTuple<Trade>> = // remove offsetEpochDayStart from time; shift + nano for score
-            trades.map { DefaultTypedTuple<Trade>(it, ((it.timestamp - offset) * 1_000_000_000 + it.nano).toDouble()) }.toSet()
-        template.opsForZSet().add(table, set)
+    override suspend fun cacheTrades(symbol: String,  date: String, table: String, trades: List<Trade>, offset: Long): Boolean? {
+        val tableName = "$symbol:$date:$table"
+
+        println("CACHING TRADES IN TABLE $tableName")
+        val prevShardCount = template.opsForSet().size(tableName)?.toInt() ?: 0
+
+        // break apart the number of trades by the shard size
+        trades.chunked(SHARD_SIZE).forEachIndexed { i, shard ->
+            val n = prevShardCount + i
+            val fullTableName = "$tableName:$n"
+            println(" | $fullTableName")
+            val set: Set<ZSetOperations.TypedTuple<Trade>> = // remove offsetEpochDayStart from time; shift + nano for score
+                shard.map { DefaultTypedTuple<Trade>(it, ((it.timestamp - offset) * 1_000_000_000 + it.nano).toDouble()) }.toSet()
+            template.opsForZSet().add(fullTableName, set)
+            timestampTemplate.opsForSet().add(tableName, shard.first().timestamp.toString())
+        }
+
+        // TODO: update metadata for the Hashed object
+//        shardRepository.save(
+//            HashedShard(
+//                table = "$symbol:$table",
+//                day = date,
+//                timestamps = timestampList
+//            )
+//        )
+
         return true
     }
 
@@ -262,7 +341,7 @@ class DefaultAlpacaService(
                     .withHour(4).withMinute(0).withSecond(0)
                 val basicDate = date.format(DateTimeFormatter.BASIC_ISO_DATE)
                 val offset = date.toEpochSecond(ZoneOffset.UTC)
-                cacheTrades("$table:$basicDate", it, offset)
+                cacheTrades(symbol=tradeSet.symbol, date=basicDate, table=TABLE_NAME, trades=it, offset=offset)
             }
         }
     }
