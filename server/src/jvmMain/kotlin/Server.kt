@@ -16,10 +16,7 @@ import org.slf4j.event.Level
 import tech.muso.stonky.endpoints.routePortfolios
 import tech.muso.stonky.endpoints.routeWebSocketPortfolios
 import tech.muso.stonky.endpoints.routeWebSocketPriceHistory
-import tech.muso.stonky.endpoints.routeWebSocketQuotes
 import java.time.Duration
-import java.util.*
-import java.util.function.Predicate
 import tech.muso.stonky.config.Config
 
 val stockWatchlist = mutableListOf(
@@ -28,19 +25,6 @@ val stockWatchlist = mutableListOf(
     WatchListItem("SPY", 3),
     WatchListItem("QQQ", 3)
 )
-
-//fun <E> MutableCollection<E>.removeIf(filter: Predicate<in E?>): Boolean {
-//    Objects.requireNonNull(filter)
-//    var removed = false
-//    val each: MutableIterator<E> = this.iterator()
-//    while (each.hasNext()) {
-//        if (filter.test(each.next())) {
-//            each.remove()
-//            removed = true
-//        }
-//    }
-//    return removed
-//}
 
 fun main() {
 
@@ -109,14 +93,13 @@ fun main() {
                 }
                 delete("/{id}") {
                     val id = call.parameters["id"]?.toInt() ?: error("Invalid delete request")
-//                    stockWatchlist.removeIf { it.id == id }
                     stockWatchlist.removeIf { it.id == id }
                     call.respond(HttpStatusCode.OK)
                 }
             }
 
             routeWebSocketPriceHistory(client)
-            routeWebSocketQuotes()
+//            routeWebSocketQuotes()
             routeWebSocketPortfolios()
 //            routeWebSocketTester()
         }

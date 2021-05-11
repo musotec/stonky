@@ -39,7 +39,7 @@ kotlin {
 
 
                 // TD Ameritrade API for server data sourcing.
-                implementation("com.studerw.tda:td-ameritrade-client:2.4.0")
+//                implementation("com.studerw.tda:td-ameritrade-client:2.4.0")
             }
         }
 
